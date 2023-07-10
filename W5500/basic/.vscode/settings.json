@@ -1,0 +1,32 @@
+{
+    "makefile.extensionOutputFolder": "./.vscode",
+    "idf.adapterTargetName": "esp32",
+    "idf.portWin": "COM6",
+    "idf.flashType": "UART",
+    "idf.port": "/dev/ttyACM0",
+    "files.associations": {
+        "ping_main.h": "c",
+        "mqtt_client.h": "c",
+        "esp_event.h": "c",
+        "string.h": "c",
+        "sockets.h": "c",
+        "ssl_psk_main.h": "c",
+        "stddef.h": "c",
+        "esp_ping.h": "c",
+        "task.h": "c",
+        "esp_netif.h": "c",
+        "esp_eth.h": "c",
+        "nvs_flash.h": "c",
+        "esp_log.h": "c",
+        "queue.h": "c",
+        "netdb.h": "c",
+        "semphr.h": "c",
+        "esp_system.h": "c",
+        "freertos.h": "c",
+        "*.ipp": "c",
+        "type_traits": "c",
+        "*.inc": "c",
+        "eth_main.h": "c",
+        "tcpip_adapter.h": "c"
+    }
+}
