@@ -1,3 +1,4 @@
 {
-    "cmake.sourceDirectory": "/home/santos/Downloads/W5500/basic/extra_components/mqtts"
+    "cmake.sourceDirectory": "/home/santos/Downloads/W5500/basic/extra_components/mqtts",
+    "idf.adapterTargetName": "esp32"
 }
