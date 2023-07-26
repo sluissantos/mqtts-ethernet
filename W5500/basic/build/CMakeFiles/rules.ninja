@@ -1556,6 +1556,44 @@ rule C_STATIC_LIBRARY_LINKER____idf_main_
 #############################################
 # Rule for compiling C files.
 
+rule C_COMPILER____idf_uart_
+  depfile = $DEP_FILE
+  deps = gcc
+  command = /home/santos/.espressif/tools/xtensa-esp32-elf/esp-2021r2-patch5-8.4.0/xtensa-esp32-elf/bin/xtensa-esp32-elf-gcc $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
+  description = Building C object $out
+
+
+#############################################
+# Rule for linking C static library.
+
+rule C_STATIC_LIBRARY_LINKER____idf_uart_
+  command = $PRE_LINK && /usr/bin/cmake -E rm -f $TARGET_FILE && /home/santos/.espressif/tools/xtensa-esp32-elf/esp-2021r2-patch5-8.4.0/xtensa-esp32-elf/bin/xtensa-esp32-elf-ar qc $TARGET_FILE $LINK_FLAGS $in && /home/santos/.espressif/tools/xtensa-esp32-elf/esp-2021r2-patch5-8.4.0/xtensa-esp32-elf/bin/xtensa-esp32-elf-ranlib $TARGET_FILE && $POST_BUILD
+  description = Linking C static library $TARGET_FILE
+  restat = $RESTAT
+
+
+#############################################
+# Rule for compiling C files.
+
+rule C_COMPILER____idf_comunication_
+  depfile = $DEP_FILE
+  deps = gcc
+  command = /home/santos/.espressif/tools/xtensa-esp32-elf/esp-2021r2-patch5-8.4.0/xtensa-esp32-elf/bin/xtensa-esp32-elf-gcc $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
+  description = Building C object $out
+
+
+#############################################
+# Rule for linking C static library.
+
+rule C_STATIC_LIBRARY_LINKER____idf_comunication_
+  command = $PRE_LINK && /usr/bin/cmake -E rm -f $TARGET_FILE && /home/santos/.espressif/tools/xtensa-esp32-elf/esp-2021r2-patch5-8.4.0/xtensa-esp32-elf/bin/xtensa-esp32-elf-ar qc $TARGET_FILE $LINK_FLAGS $in && /home/santos/.espressif/tools/xtensa-esp32-elf/esp-2021r2-patch5-8.4.0/xtensa-esp32-elf/bin/xtensa-esp32-elf-ranlib $TARGET_FILE && $POST_BUILD
+  description = Linking C static library $TARGET_FILE
+  restat = $RESTAT
+
+
+#############################################
+# Rule for compiling C files.
+
 rule C_COMPILER____idf_eth_
   depfile = $DEP_FILE
   deps = gcc
@@ -1614,7 +1652,7 @@ rule C_STATIC_LIBRARY_LINKER____idf_ping_
 # Rule for re-running cmake.
 
 rule RERUN_CMAKE
-  command = /usr/bin/cmake --regenerate-during-build -S/home/santos/esp/esp-idf/examples/protocols/luis/W5500/basic -B/home/santos/esp/esp-idf/examples/protocols/luis/W5500/basic/build
+  command = /usr/bin/cmake --regenerate-during-build -S/home/santos/mqtts-ethernet/W5500/basic -B/home/santos/mqtts-ethernet/W5500/basic/build
   description = Re-running CMake...
   generator = 1
 

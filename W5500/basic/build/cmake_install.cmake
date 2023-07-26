@@ -1,4 +1,4 @@
-# Install script for directory: /home/santos/esp/esp-idf/examples/protocols/luis/W5500/basic
+# Install script for directory: /home/santos/mqtts-ethernet/W5500/basic
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -39,7 +39,7 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("/home/santos/esp/esp-idf/examples/protocols/luis/W5500/basic/build/esp-idf/cmake_install.cmake")
+  include("/home/santos/mqtts-ethernet/W5500/basic/build/esp-idf/cmake_install.cmake")
 
 endif()
 
@@ -51,5 +51,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/santos/esp/esp-idf/examples/protocols/luis/W5500/basic/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/santos/mqtts-ethernet/W5500/basic/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

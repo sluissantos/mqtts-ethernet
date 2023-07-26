@@ -1,2 +1,3 @@
-idf_component_register(SRCS "mqtts_main.c"
-                       INCLUDE_DIRS ".")
+idf_component_register(SRCS "mqtts_eth.c"
+                       INCLUDE_DIRS "."
+                       REQUIRES comunication)

@@ -1,4 +1,4 @@
-/* * Data converted from /home/santos/esp/esp-idf/examples/protocols/luis/W5500/basic/certificates/broker_ca.pem
+/* * Data converted from /home/santos/mqtts-ethernet/W5500/basic/certificates/broker_ca.pem
  * (null byte appended)
  */
 .data

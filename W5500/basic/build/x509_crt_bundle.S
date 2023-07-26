@@ -1,4 +1,4 @@
-/* * Data converted from /home/santos/esp/esp-idf/examples/protocols/luis/W5500/basic/build/esp-idf/mbedtls/x509_crt_bundle
+/* * Data converted from /home/santos/mqtts-ethernet/W5500/basic/build/esp-idf/mbedtls/x509_crt_bundle
  */
 .data
 .section .rodata.embedded

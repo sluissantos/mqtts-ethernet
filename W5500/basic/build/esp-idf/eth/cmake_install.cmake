@@ -1,4 +1,4 @@
-# Install script for directory: /home/santos/esp/esp-idf/examples/protocols/luis/W5500/basic/extra_components/eth
+# Install script for directory: /home/santos/mqtts-ethernet/W5500/basic/extra_components/eth
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

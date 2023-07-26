@@ -1,4 +1,4 @@
-#include "eth_main.h"
+#include "eth.h"
 
 static const char *TAG = "eth_example";
 static const char *ip= "192.168.15.100";

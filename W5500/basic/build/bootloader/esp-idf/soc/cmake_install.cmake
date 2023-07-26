@@ -39,7 +39,7 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("/home/santos/esp/esp-idf/examples/protocols/luis/W5500/basic/build/bootloader/esp-idf/soc/esp32/cmake_install.cmake")
+  include("/home/santos/mqtts-ethernet/W5500/basic/build/bootloader/esp-idf/soc/esp32/cmake_install.cmake")
 
 endif()
 

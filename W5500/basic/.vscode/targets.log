@@ -1,4 +1,7 @@
 make all --print-data-base --no-builtin-variables --no-builtin-rules --question
+Makefile:8: /make/project.mk: No such file or directory
+make: *** No rule to make target '/make/project.mk'.  Stop.
+
 # GNU Make 4.3
 # Built for x86_64-pc-linux-gnu
 # Copyright (C) 1988-2020 Free Software Foundation, Inc.
@@ -6,7 +9,7 @@ make all --print-data-base --no-builtin-variables --no-builtin-rules --question
 # This is free software: you are free to change and redistribute it.
 # There is NO WARRANTY, to the extent permitted by law.
 
-# Make data base, printed on Mon Jul 10 15:44:25 2023
+# Make data base, printed on Tue Jul 25 21:14:38 2023
 
 # Variables
 
@@ -37,7 +40,7 @@ VSCODE_HANDLES_UNCAUGHT_ERRORS = true
 # default
 .VARIABLES := 
 # environment
-PWD = /home/santos/esp/esp-idf/examples/protocols/luis/W5500/basic
+PWD = /home/santos/mqtts-ethernet/W5500/basic
 # automatic
 %D = $(patsubst %/,%,$(dir $%))
 # environment
@@ -47,11 +50,11 @@ XDG_DATA_DIRS = /usr/share/ubuntu:/usr/local/share/:/usr/share/:/var/lib/snapd/d
 # automatic
 %F = $(notdir $%)
 # environment
-VSCODE_CODE_CACHE_PATH = /home/santos/.config/Code/CachedData/695af097c7bd098fbf017ce3ac85e09bbc5dda06
+VSCODE_CODE_CACHE_PATH = /home/santos/.config/Code/CachedData/74f6148eb9ea00507ec113ec51c489d6ffb4b771
 # environment
 LANG = C
 # environment
-XAUTHORITY = /run/user/1000/.mutter-Xwaylandauth.DWAP71
+XAUTHORITY = /run/user/1000/.mutter-Xwaylandauth.XZQ781
 # default
 .LOADED := 
 # default
@@ -59,11 +62,11 @@ XAUTHORITY = /run/user/1000/.mutter-Xwaylandauth.DWAP71
 # makefile
 MAKEFLAGS = prR
 # makefile
-CURDIR := /home/santos/esp/esp-idf/examples/protocols/luis/W5500/basic
+CURDIR := /home/santos/mqtts-ethernet/W5500/basic
 # environment
 APPLICATION_INSIGHTS_NO_DIAGNOSTIC_CHANNEL = 1
 # environment
-VSCODE_L10N_BUNDLE_LOCATION = file:///home/santos/.vscode/extensions/ms-ceintl.vscode-language-pack-pt-br-1.79.2023061409/translations/extensions/vscode.json-language-features.i18n.json
+VSCODE_L10N_BUNDLE_LOCATION = file:///home/santos/.vscode/extensions/ms-ceintl.vscode-language-pack-pt-br-1.80.2023071209/translations/extensions/vscode.json-language-features.i18n.json
 # automatic
 *D = $(patsubst %/,%,$(dir $*))
 # environment
@@ -85,13 +88,13 @@ MAKEFILE_LIST := Makefile
 # automatic
 @F = $(notdir $@)
 # environment
-VSCODE_PID = 46323
+VSCODE_PID = 4239
 # environment
 XDG_SESSION_TYPE = wayland
 # automatic
 ?D = $(patsubst %/,%,$(dir $?))
 # environment
-SESSION_MANAGER = local/santos:@/tmp/.ICE-unix/1438,unix/santos:/tmp/.ICE-unix/1438
+SESSION_MANAGER = local/santos:@/tmp/.ICE-unix/1528,unix/santos:/tmp/.ICE-unix/1528
 # automatic
 *F = $(notdir $*)
 # environment
@@ -101,7 +104,7 @@ DBUS_SESSION_BUS_ADDRESS = unix:path=/run/user/1000/bus
 # automatic
 <D = $(patsubst %/,%,$(dir $<))
 # environment
-VSCODE_NLS_CONFIG = {"locale":"pt-br","osLocale":"pt-br","availableLanguages":{"*":"pt-br"},"_languagePackId":"6ff4c721842b21ec94ff543dbdd127cd.pt-br","_translationsConfigFile":"/home/santos/.config/Code/clp/6ff4c721842b21ec94ff543dbdd127cd.pt-br/tcf.json","_cacheRoot":"/home/santos/.config/Code/clp/6ff4c721842b21ec94ff543dbdd127cd.pt-br","_resolvedLanguagePackCoreLocation":"/home/santos/.config/Code/clp/6ff4c721842b21ec94ff543dbdd127cd.pt-br/695af097c7bd098fbf017ce3ac85e09bbc5dda06","_corruptedFile":"/home/santos/.config/Code/clp/6ff4c721842b21ec94ff543dbdd127cd.pt-br/corrupted.info","_languagePackSupport":true}
+VSCODE_NLS_CONFIG = {"locale":"pt-br","osLocale":"pt-br","availableLanguages":{"*":"pt-br"},"_languagePackId":"7ec2f15b7850a3ae93a6516eb08713b9.pt-br","_translationsConfigFile":"/home/santos/.config/Code/clp/7ec2f15b7850a3ae93a6516eb08713b9.pt-br/tcf.json","_cacheRoot":"/home/santos/.config/Code/clp/7ec2f15b7850a3ae93a6516eb08713b9.pt-br","_resolvedLanguagePackCoreLocation":"/home/santos/.config/Code/clp/7ec2f15b7850a3ae93a6516eb08713b9.pt-br/74f6148eb9ea00507ec113ec51c489d6ffb4b771","_corruptedFile":"/home/santos/.config/Code/clp/7ec2f15b7850a3ae93a6516eb08713b9.pt-br/corrupted.info","_languagePackSupport":true}
 # default
 MAKE_HOST := x86_64-pc-linux-gnu
 # environment
@@ -133,7 +136,7 @@ LANGUAGE = pt_BR:pt:en
 # automatic
 ^F = $(notdir $^)
 # environment
-INVOCATION_ID = fa25a05b64a3471987dd182024fe3c5f
+INVOCATION_ID = 8f8d2f93c58948ddbbf312d78786a745
 # environment
 USERNAME = santos
 # environment
@@ -157,7 +160,7 @@ GIO_LAUNCHED_DESKTOP_FILE = /usr/share/applications/code.desktop
 # makefile
 .DEFAULT_GOAL := 
 # environment
-SYSTEMD_EXEC_PID = 1465
+SYSTEMD_EXEC_PID = 1555
 # environment
 DISPLAY = :0
 # environment
@@ -167,15 +170,15 @@ GTK_MODULES = gail:atk-bridge
 # default
 MAKE_VERSION := 4.3
 # environment
-MANAGERPID = 1303
+MANAGERPID = 1394
 # environment
-GIO_LAUNCHED_DESKTOP_FILE_PID = 46323
+GIO_LAUNCHED_DESKTOP_FILE_PID = 4239
 # environment
 _ = /usr/share/code/code
 # environment
 XDG_RUNTIME_DIR = /run/user/1000
 # environment
-JOURNAL_STREAM = 8:33903
+JOURNAL_STREAM = 8:27338
 # environment
 XDG_SESSION_CLASS = user
 # environment
@@ -187,7 +190,7 @@ QT_IM_MODULE = ibus
 # environment
 ELECTRON_RUN_AS_NODE = 1
 # environment
-VSCODE_IPC_HOOK = /run/user/1000/vscode-03ec8223-1.79-main.sock
+VSCODE_IPC_HOOK = /run/user/1000/vscode-03ec8223-1.80-main.sock
 # environment
 IM_CONFIG_PHASE = 1
 # default
@@ -213,9 +216,9 @@ GDMSESSION = ubuntu
 
 # Directories
 
-# . (device 66307, inode 5003423): 15 files, no impossibilities.
+# . (device 66307, inode 4986000): 14 files, no impossibilities.
 
-# 15 files, no impossibilities in 1 directories.
+# 14 files, no impossibilities in 1 directories.
 
 # Implicit Rules
 
@@ -256,15 +259,12 @@ all:
 
 # No general ('VPATH' variable) search path.
 
-# strcache buffers: 1 (0) / strings = 21 / storage = 226 B / avg = 10 B
-# current buf: size = 8162 B / used = 226 B / count = 21 / avg = 10 B
+# strcache buffers: 1 (0) / strings = 20 / storage = 221 B / avg = 11 B
+# current buf: size = 8162 B / used = 221 B / count = 20 / avg = 11 B
 
-# strcache performance: lookups = 26 / hit rate = 19%
+# strcache performance: lookups = 25 / hit rate = 20%
 # hash-table stats:
-# Load=21/8192=0%, Rehash=0, Collisions=0/26=0%
-# Finished Make data base on Mon Jul 10 15:44:25 2023
+# Load=20/8192=0%, Rehash=0, Collisions=0/25=0%
+# Finished Make data base on Tue Jul 25 21:14:38 2023
 
  
-Makefile:8: /make/project.mk: No such file or directory
-make: *** No rule to make target '/make/project.mk'.  Stop.
-

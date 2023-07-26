@@ -1,5 +1,5 @@
 
-#include "ping_main.h"
+#include "ping.h"
 
 static const char *TAG = "ping";
 

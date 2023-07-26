@@ -39,9 +39,9 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("/home/santos/esp/esp-idf/examples/protocols/luis/W5500/basic/build/esp-idf/mbedtls/mbedtls/include/cmake_install.cmake")
-  include("/home/santos/esp/esp-idf/examples/protocols/luis/W5500/basic/build/esp-idf/mbedtls/mbedtls/3rdparty/cmake_install.cmake")
-  include("/home/santos/esp/esp-idf/examples/protocols/luis/W5500/basic/build/esp-idf/mbedtls/mbedtls/library/cmake_install.cmake")
+  include("/home/santos/mqtts-ethernet/W5500/basic/build/esp-idf/mbedtls/mbedtls/include/cmake_install.cmake")
+  include("/home/santos/mqtts-ethernet/W5500/basic/build/esp-idf/mbedtls/mbedtls/3rdparty/cmake_install.cmake")
+  include("/home/santos/mqtts-ethernet/W5500/basic/build/esp-idf/mbedtls/mbedtls/library/cmake_install.cmake")
 
 endif()
 

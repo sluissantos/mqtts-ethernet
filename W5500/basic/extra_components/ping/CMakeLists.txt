@@ -1,2 +1,2 @@
-idf_component_register(SRCS "ping_main.c"
+idf_component_register(SRCS "ping.c"
                        INCLUDE_DIRS ".")
