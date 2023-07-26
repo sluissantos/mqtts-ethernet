@@ -1,5 +1,0 @@
-cmake_minimum_required(VERSION 3.5)
-set(EXTRA_COMPONENT_DIRS "extra_components")
-include($ENV{IDF_PATH}/tools/cmake/project.cmake)
-project(ethernet_basic)
-target_add_binary_data(ethernet_basic.elf "certificates/broker_ca.pem" TEXT)
