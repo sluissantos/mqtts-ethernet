@@ -1,8 +1,8 @@
 {
     "project_name":       "bootloader",
     "project_path":       "/home/santos/esp/esp-idf/components/bootloader/subproject",
-    "build_dir":          "/home/santos/mqtts-ethernet/W5500/basic/build/bootloader",
-    "config_file":        "/home/santos/mqtts-ethernet/W5500/basic/sdkconfig",
+    "build_dir":          "/home/santos/mqtts-ethernet/build/bootloader",
+    "config_file":        "/home/santos/mqtts-ethernet/sdkconfig",
     "config_defaults":    "",
     "app_elf":            "bootloader.elf",
     "app_bin":            "bootloader.bin",

@@ -26,10 +26,13 @@ void app_main(void){
 
     xTaskCreatePinnedToCore(commUpdateBufferTask,"BUFFER",(1024 * 5),NULL,0,&commUpdateBufferTask_handler,0);
     configASSERT(commUpdateBufferTask_handler);
-
+    
+    commSendHexDataWithDelay();
+    /*
     while (1){
         publish_mqtts("test/status");
         vTaskDelay(20000 / portTICK_PERIOD_MS);
     }
+    */
     
 }

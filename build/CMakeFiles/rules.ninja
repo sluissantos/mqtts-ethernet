@@ -1652,7 +1652,7 @@ rule C_STATIC_LIBRARY_LINKER____idf_ping_
 # Rule for re-running cmake.
 
 rule RERUN_CMAKE
-  command = /usr/bin/cmake --regenerate-during-build -S/home/santos/mqtts-ethernet/W5500/basic -B/home/santos/mqtts-ethernet/W5500/basic/build
+  command = /usr/bin/cmake --regenerate-during-build -S/home/santos/mqtts-ethernet -B/home/santos/mqtts-ethernet/build
   description = Re-running CMake...
   generator = 1
 

@@ -179,6 +179,7 @@ void commUpdateBufferTask(void *pvParameter) {
                 printf("data=%s\n", (char *)data);
                 printf("length=%hhu\n", dataSize);
                 commMontaPacote(data);
+                commSendHexDataWithDelay();
                 free(data);
             }
             status = false;
@@ -213,8 +214,8 @@ void commMontaPacote(uint8_t *data){
 	//	------------------------------------------------------
 	switch(data[0]) {
 		case 48:
-            ret=BufferPush(&uartBuffer, 0x00);
-            ret=BufferPush(&uartBuffer, 0x96);
+            //ret=BufferPush(&uartBuffer, 0x00);
+            //ret=BufferPush(&uartBuffer, 0x96);
             break;
 
 		case 49:	    			
@@ -228,4 +229,17 @@ void commMontaPacote(uint8_t *data){
 			break;
 	}
 }
+
+void commSendHexDataWithDelay() {
+    uint8_t data[] = {0x00, 0x96, 0x03, 0xFF, 0xC0, 0xC0,  'M', 'M', 0x11};
+    uint8_t dataSize = sizeof(data);
+
+    for (uint8_t i = 0; i < dataSize; i++) {
+        commSendDataInterface(&data[i], 1); // Envia um byte por vez
+        ESP_LOGI("DATA", "data[%d] = 0x%02X", i, data[i]); // Imprime o valor em formato hexadecimal
+        vTaskDelay(pdMS_TO_TICKS(50)); // Atraso de 50ms
+    }
+    ESP_LOGI("COMM","terminou");
+}
+
 

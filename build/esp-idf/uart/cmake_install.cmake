@@ -1,4 +1,4 @@
-# Install script for directory: /home/santos/mqtts-ethernet/W5500/basic/extra_components/uart
+# Install script for directory: /home/santos/mqtts-ethernet/extra_components/uart
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
