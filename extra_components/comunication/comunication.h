@@ -71,5 +71,6 @@ int8_t commBufferPush(uint8_t  interface,uint8_t * newData);
 void commSendDataInterface(uint8_t *Dado, uint8_t length);
 void set_variables(char *payload);
 void commSendHexDataWithDelay(void);
+void initialize_comunication(uint8_t id_d);
 
 #endif

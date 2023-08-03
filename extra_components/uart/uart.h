@@ -11,7 +11,7 @@
 #define UART2_INSTANCE 2 // verificar circuito
 #define UART2_PIN_RX  16//19
 #define UART2_PIN_TX  17
-#define UART2_BAUD_RATE 115200
+#define UART2_BAUD_RATE 9600
 #define UART_BUFFER_SIZE 1024
 #define UART_CONFIG_DEFAULT() {            \
     .baud_rate = UART2_BAUD_RATE,          \

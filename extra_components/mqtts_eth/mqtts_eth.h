@@ -19,6 +19,6 @@
 #include "mqtt_client.h"
 #include "comunication.h"
 
-void initialize_mqtts();
-void publish_mqtts(char *topic);
+void initialize_mqtts(char* publish, char* subscribe);
 void check_messages_task();
+void publish_messages_task();

@@ -174,8 +174,8 @@ void initialize_ethernet(void){
     ESP_ERROR_CHECK(esp_event_handler_register(IP_EVENT, IP_EVENT_ETH_GOT_IP, &got_ip_event_handler, NULL));
     // Registra manipuladores de eventos definidos pelo usuário
 
-    esp_netif_dhcpc_stop(eth_netif_spi); // Pare o cliente DHCP para evitar conflitos
-    
+    //esp_netif_dhcpc_stop(eth_netif_spi); // Pare o cliente DHCP para evitar conflitos
+    /*
     //Static IP defined 
     esp_netif_ip_info_t ip_info;
     memset(&ip_info, 0, sizeof(esp_netif_ip_info_t));
@@ -184,7 +184,7 @@ void initialize_ethernet(void){
     ipaddr_aton(netmask, &ip_info.netmask.addr);
     esp_netif_set_ip_info(eth_netif_spi, &ip_info); // Defina as informações de IP estático
     //no caso em IP não será estatico, remover as 6 linhas de código acima
-
+    */
     ESP_ERROR_CHECK(esp_eth_start(eth_handle_spi));
     // Inicia a interface Ethernet
 }

@@ -1,9 +1,9 @@
 #include "mqtts_eth.h"
 
-//#define EXAMPLE_BROKER_URI "mqtt://gwqa.revolog.com.br:1884"
-#define EXAMPLE_BROKER_URI "mqtt://192.168.15.61:1883"
-//#define EXAMPLE_BROKER_URI "mqtts://192.168.15.61:8883"
-#define MQTT_TOPIC "test/message"
+#define EXAMPLE_BROKER_URI "mqtt://gwqa.revolog.com.br:1884"
+//#define EXAMPLE_BROKER_URI "mqtt://192.168.15.4:1883"
+//#define EXAMPLE_BROKER_URI "mqtts://192.168.15.4:8883"
+
 #define QOS 2
 static const char *TAG ="MQTTS";
 
@@ -15,6 +15,22 @@ static bool flag_connected = false;
 static bool flag_subscribed = false;
 static bool new_message = false;
 static char* payload;
+static char* publish_topic;
+static char* subscribe_topic;
+
+void publish_mqtts(){
+    if(flag_connected){
+        esp_mqtt_client_publish(client, publish_topic, "Ok", 0, QOS, 1);
+    }
+    return;
+}
+
+void publish_messages_task(){
+    while (1){
+        publish_mqtts(publish_topic);
+        vTaskDelay(10000 / portTICK_PERIOD_MS);
+    }
+}
 
 void check_messages_task(){
     while (1){
@@ -32,7 +48,7 @@ static esp_err_t mqtt_event_handler(esp_mqtt_event_handle_t event){
         case MQTT_EVENT_CONNECTED:
             ESP_LOGI(TAG, "MQTT_EVENT_CONNECTED");
             if(flag_subscribed==false){
-                    esp_mqtt_client_subscribe(client, MQTT_TOPIC, QOS);
+                    esp_mqtt_client_subscribe(client, subscribe_topic, QOS);
                     ESP_LOGI(TAG, "sent subscribe successful.");
                     flag_subscribed = true;
             }
@@ -83,11 +99,11 @@ static void mqtt_app_start(void){
         .uri = EXAMPLE_BROKER_URI,
         .event_handle = mqtt_event_handler,
         //.cert_pem =  (const char *)broker_cert_pem_start,
-        //.username = "tecnologia",
-        //.password = "128Parsecs!",
-        .username = "",
-        .password = "",
-        .lwt_topic = MQTT_TOPIC,
+        .username = "tecnologia",
+        .password = "128Parsecs!",
+        //.username = "",
+        //.password = "",
+        .lwt_topic = subscribe_topic,
         .lwt_qos = QOS,
         .lwt_retain = 0,
         .keepalive = 60
@@ -98,27 +114,15 @@ static void mqtt_app_start(void){
     return;
 }
 
-void publish_mqtts(char *topic){
-    if(flag_connected){
-        esp_mqtt_client_publish(client, topic, "Ok", 0, QOS, 1);
-        //ESP_LOGI(TAG, "Ok.");
-    }
-    /*
-    else{
-        esp_mqtt_client_publish(client, topic, "ferias", 0, QOS, 1);
-        ESP_LOGI(TAG, "Not published.Client not connected.");
-    }
-    */
-    return;
-}
-
-void initialize_mqtts(void){
+void initialize_mqtts(char* publish, char* subscribe){
     esp_log_level_set("*", ESP_LOG_INFO);
     esp_log_level_set("MQTT_CLIENT", ESP_LOG_VERBOSE);
     esp_log_level_set("TRANSPORT_BASE", ESP_LOG_VERBOSE);
     esp_log_level_set("esp-tls", ESP_LOG_VERBOSE);
     esp_log_level_set("TRANSPORT", ESP_LOG_VERBOSE);
     esp_log_level_set("OUTBOX", ESP_LOG_VERBOSE);
+    publish_topic = strdup(publish);
+    subscribe_topic = strdup(subscribe);
     mqtt_app_start();
     return;
 }

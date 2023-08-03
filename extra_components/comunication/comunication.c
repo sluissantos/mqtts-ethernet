@@ -15,28 +15,13 @@ uint8_t TamanhoNovoPacote = 0;
 uint8_t lengthDataUart = 0;
 
 uint8_t id;
+uint8_t id_display;
 uint8_t left;
 uint8_t right;
-static char* plate;
+char* plate;
+uint8_t* data = 0;
+size_t dataLen;
 static bool status=false;
-
-// Estrtura buffer circular
-typedef struct buffer{   
-    uint16_t maxlen;
-    uint16_t size;
-    uint16_t head;
-    uint16_t tail;
-    uint8_t buffer[COMM_BUFFER_SIZE];
-}buffer_t;
-
-// Inicializa buffer BLE
-buffer_t uartBuffer ={
-    .maxlen = COMM_BUFFER_SIZE,
-    .size = 0,
-    .head = 0,
-    .tail = 0,
-    .buffer={0},
-};
 
 void parse_json(const char* jsonString) {
     cJSON* json = cJSON_Parse(jsonString);
@@ -49,7 +34,7 @@ void parse_json(const char* jsonString) {
     if (id_object != NULL) {
         id = id_object->valueint;
     } else {
-        id = 2;
+        id = 3;
     }
 
     cJSON* left_object = cJSON_GetObjectItem(json, "left");
@@ -74,6 +59,25 @@ void parse_json(const char* jsonString) {
         plate = "";
     }
 
+    // Acessa diretamente a chave "data" no JSON
+    cJSON *data_object = cJSON_GetObjectItem(json, "data");
+    if (data_object != NULL && cJSON_IsArray(data_object)) {
+        dataLen = cJSON_GetArraySize(data_object);
+        data = (uint8_t *)malloc(dataLen * sizeof(uint8_t));
+
+        // Copia os valores do JSON para data_array
+        for (size_t i = 0; i < dataLen; ++i) {
+            cJSON *value = cJSON_GetArrayItem(data_object, i);
+            if (value != NULL && cJSON_IsNumber(value)) {
+                data[i] = (uint8_t)value->valueint;
+            }
+        }
+
+    } else {
+        printf("Chave 'data' não encontrada no JSON.\n");
+        data = NULL;
+    }
+
     // Após usar o JSON, lembre-se de liberar a memória ocupada por ele.
     cJSON_Delete(json);
 	return;
@@ -83,68 +87,6 @@ void set_variables(char *payload){
 	parse_json(payload);
 	status =true;
 	return;
-}
-
-void commMontaPacote(uint8_t *data);
-int8_t BufferPop(buffer_t * buffer, uint8_t *data);
-int8_t BufferPush(buffer_t * currentBuffer,uint8_t * newData);
-
-int8_t commBufferPush(uint8_t interface,uint8_t * newData){
-	int8_t ret=0;
-	switch (interface){
-		case COMM_INTERFACE_UART:
-			break;
-		default:
-			break;
-	}
-	return ret;
-}
-
-///////////////////////////////////////////////////////////////////////////////////
-// Função: commBufferPush(uint8_t * newData);
-// Descrição: Realiza inserção de novos dados ao buffer
-// Argumentos: buffer_t *buffer -> Ponteiro para buffer de dados
-// 		       uint8_t   data 	-> Struct contendo dados do device
-// Retorno:
-//////////////////////////////////////////////////////////////////////////////////
-int8_t BufferPush(buffer_t * currentBuffer,uint8_t * newData)
-{	//buffer_t *buffer = &primaryBuffer;
-	buffer_t *buffer = currentBuffer;
-    int8_t next;	
-	uint8_t data = *newData;		
-
-    next = buffer->head + 1;  // next is where head will point to after this write.
-    if (next >= buffer->maxlen)
-        next = 0;
-
-    if (next == buffer->tail)  // if the head + 1 == tail, circular buffer is full
-        return -1;
-
-    buffer->buffer[buffer->head] = data;  // Load data and then move
-    buffer->head = next;             // head to next data offset.
-    return 0; // return success to indicate successful push.
-}
-
-///////////////////////////////////////////////////////////////////////////////////
-// Função: commBufferPop(buffer_t * buffer, uint8_t * data);
-// Descrição: Envia dado para dispositivo selecionado
-// Argumentos: buffer_t * buffer -> Ponteiro para buffer
-// 			   uint8_t * data 	 -> Ponteiro para byte recolhido
-// Retorno
-//////////////////////////////////////////////////////////////////////////////////
-int8_t BufferPop(buffer_t * buffer, uint8_t *data){
-    int8_t next;
-
-    if (buffer->head == buffer->tail)  // if the head == tail, we don't have any data
-        return -1;
-
-    next = buffer->tail + 1;  // next is where tail will point to after this read.
-    if((next >= buffer->maxlen))
-        next = 0;
-
-    *data = buffer->buffer[buffer->tail];  // Read data and then move
-    buffer->tail = next;              // tail to next offset.
-    return 0;  // return success to indicate successful push.
 }
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -158,6 +100,19 @@ void commSendDataInterface(uint8_t *Dado, uint8_t length) {
     uartSendData(UART2_INSTANCE, (char *)Dado, length);
 }
 
+void send_data(uint8_t *data, uint8_t dataSize) {
+    if (data != NULL) {
+        for (uint8_t i = 0; i < dataSize; i++) {
+            commSendDataInterface(&data[i], 1);
+            ESP_LOGI("COMM", "data[%d] = 0x%X", i, data[i]);
+            vTaskDelay(pdMS_TO_TICKS(50));
+        }
+    } else {
+        ESP_LOGI("COMM", "data is null");
+    }
+}
+
+
 ///////////////////////////////////////////////////////////////////////////////////
 // Função: commUpdateBufferTask(uint16_t );
 // Descrição: Define nova de decawaveID 
@@ -167,79 +122,116 @@ void commSendDataInterface(uint8_t *Dado, uint8_t length) {
 //////////////////////////////////////////////////////////////////////////////////
 void commUpdateBufferTask(void *pvParameter) {
    while (1) {
+
+        uint8_t data_stop[] = {0x00, 0x96, 0x03, 0xFF, 0XC5, 0XC5, 0x1F, 0x62, 0x11};
+
+        uint8_t data_left[] = {0x00, 0x96, 0x03, 0xFF, 0xC0, 0xC0, 0x1F, 0x12, 0x1F, 0x12, 0x1F, 0x12, 0x1F, 0x12, 0x1F, 0x12, 0x1F, 0x12, 0x1F, 0x12, 0x1F, 0x12, 0x11};
+
+        uint8_t data_right[] = {0x00, 0x96, 0x03, 0xFF, 0xC1, 0xC1, 0x1F, 0x0E, 0x1F, 0x0E, 0x1F, 0x0E, 0x1F, 0x0E, 0x1F, 0x0E, 0x1F, 0x0E, 0x1F, 0x0E, 0x1F, 0x0E, 0x11};
+
+        uint8_t data_id_left[] = {0x00, 0x96, 0x03, 0xFF, 0xC5, 0xC5, 0x01, ' ', ' ', ' ', ' ', ' ', ' ', ' ',
+         0xFF, 0xC5, 0xC5, 0x01, ' ', ' ', ' ', ' ', ' ', ' ', ' ',
+            0xFF, 0xC0, 0xC0, 0x1F, 0x12, 0x1F, 0x12, 0x1F, 0x12, 0x1F, 0x12, 0x1F, 0x12, 0x1F, 0x12,
+                0x1F, 0x12, 0x1F, 0x12, 0x1F, 0x12, 0x1F, 0x12, 0x1F, 0x12, 0x1F, 0x12, 0x11};
+
+        uint8_t data_id_right[] = {0x00, 0x96, 0x03, 0xFF, 0xC5, 0xC5, 0x01, ' ', ' ', ' ', ' ', ' ', ' ', ' ',
+         0xFF, 0xC5, 0xC5, 0x01, ' ', ' ', ' ', ' ', ' ', ' ', ' ',
+            0xFF, 0xC1, 0xC1, 0x1F, 0x0E, 0x1F, 0x0E, 0x1F, 0x0E, 0x1F, 0x0E,0x1F, 0x0E, 0x1F, 0x0E, 
+                0x1F, 0x0E, 0x1F, 0x0E,0x1F, 0x0E, 0x1F, 0x0E, 0x1F, 0x0E, 0x1F, 0x0E, 0x11};
+
         if (status) {
-            //printf("id=%d\n", id);
-            //printf("left=%d\n", left);
-            //printf("right=%d\n", right);
-            //printf("plate=%s\n", plate);
-            uint8_t dataSize = snprintf(NULL, 0, "%d%d%d%s", id, left, right, plate) + 1;
-            uint8_t *data = (uint8_t *)malloc(dataSize);
-            if (data != NULL) {
-                snprintf((char *)data, dataSize, "%d%d%d%s", id, left, right, plate);
-                printf("data=%s\n", (char *)data);
-                printf("length=%hhu\n", dataSize);
-                commMontaPacote(data);
-                commSendHexDataWithDelay();
-                free(data);
+            if(id == 0 && id_display == 0) {
+                if(data != NULL){
+                    send_data(data, dataLen);
+                }
+                else if(left == 1 && right == 0){
+                    if(strlen(plate) == 0){
+                        send_data(data_stop, sizeof(data_stop));
+                    }
+                    else {
+                        send_data(data_left, sizeof(data_left));
+                    }
+                }
+                else if(left == 0 && right == 1){
+                    if(strlen(plate) == 0){
+                        send_data(data_stop, sizeof(data_stop));
+                    }
+                    else {
+                        send_data(data_right, sizeof(data_right));
+                    }
+                }
+                else{
+                    ESP_LOGI("COMM","ERRO NA ORIENTACAO");
+                }
             }
+
+            else if(id == 1 && id_display == 1) {
+                if(data != NULL){
+                    send_data(data, dataLen);
+                    printf("entrou aqui");
+                }
+                else if(strlen(plate) == 0){
+                    send_data(data_stop, sizeof(data_stop));
+                                        printf("entrou aqui");
+                }
+
+                else if(left == 1 && right ==0){
+                    for (uint8_t i = 0; i < 7; i++) {
+                        data_id_left[7 + i] = plate[i];
+                        data_id_left[18 + i] = plate[i];
+                    }
+                    send_data(data_id_left, sizeof(data_id_left));
+                }
+
+                else if(left == 0 && right == 1){
+                    for (uint8_t i = 0; i < 7; i++) {
+                        data_id_right[7 + i] = plate[i];
+                        data_id_right[18 + i] = plate[i];
+                    }
+                    send_data(data_id_right, sizeof(data_id_right));
+                }
+
+                else{
+                    ESP_LOGI("COMM","ERRO NA ORIENTACAO");
+                }
+                
+                }
+
+            else if(id == 2 && id_display == 2) {
+                if(data != NULL){
+                    send_data(data, dataLen);
+                }  		
+                else if(left == 1 && right == 0){
+                    if(strlen(plate) == 0){
+                        send_data(data_stop, sizeof(data_stop));
+                    }
+                    else {
+                        send_data(data_left, sizeof(data_left));
+                    }
+                }
+                else if(left == 0 && right == 1){
+                    if(strlen(plate) == 0){
+                        send_data(data_stop, sizeof(data_stop));
+                    }
+                    else {
+                        send_data(data_right, sizeof(data_right));
+                    }
+                }
+                else{
+                    ESP_LOGI("COMM","ERRO NA ORIENTACAO");
+                }
+            }
+            else{
+                ESP_LOGI("COMM","ERRO NO INDENTIFICADOR DO PAINEL");
+            }
+
             status = false;
         }
+
         taskYIELD();
     }
 }
 
-///////////////////////////////////////////////////////////////////////////////////
-// Função: commMontaPacote(uint8_t ByteLido);
-// Descrição: Monta os dados recebidos em um pacote valido
-// Argumentos: uint8_t deviceIndx -> DEVICE_UART_INDX             
-// Retorno:    device_t -> Struct contendo dados do device
-//////////////////////////////////////////////////////////////////////////////////
-void commMontaPacote(uint8_t *data){
-    int8_t ret=0;
-    ESP_LOGI("COMM","data=%hhu", data[0]);
-	//  Decodificacao do frame recebido
-	//	------------------------------------------------------
-	// Le cada byte do buffer circular da Uart, e monta os 
-	// pacotes recebidos em um buffer local: new_pacote.
-	//
-	// gEstadosRxSerial assume os seguites valores:
-	// 0 = Estado inicial
-	// 1 = Recebeu start bit     
-	// 2 = Recebeu tamanho do frame
-	// 3 = Recebeu dado
-	// 4 = Recebeu chksum, dado disponivel, new pacote 
-	// 5 ao 255 = Reservado
-	// Ao final do frame recebido, chama o metodo 
-	// TrataPacote, que decodifica o frame
-	//	------------------------------------------------------
-	switch(data[0]) {
-		case 48:
-            //ret=BufferPush(&uartBuffer, 0x00);
-            //ret=BufferPush(&uartBuffer, 0x96);
-            break;
-
-		case 49:	    			
-            break;
-
-		case 50:  		
-			break;    			    			
-
-		default:
-            ESP_LOGI("COMM","DEFAULT");
-			break;
-	}
+void initialize_comunication(uint8_t id_d){
+    id_display = id_d;
 }
-
-void commSendHexDataWithDelay() {
-    uint8_t data[] = {0x00, 0x96, 0x03, 0xFF, 0xC0, 0xC0,  'M', 'M', 0x11};
-    uint8_t dataSize = sizeof(data);
-
-    for (uint8_t i = 0; i < dataSize; i++) {
-        commSendDataInterface(&data[i], 1); // Envia um byte por vez
-        ESP_LOGI("DATA", "data[%d] = 0x%02X", i, data[i]); // Imprime o valor em formato hexadecimal
-        vTaskDelay(pdMS_TO_TICKS(50)); // Atraso de 50ms
-    }
-    ESP_LOGI("COMM","terminou");
-}
-
-
