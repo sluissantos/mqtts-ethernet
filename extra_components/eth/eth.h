@@ -14,10 +14,15 @@
 #include "sys/socket.h"
 #include "netdb.h"
 #include "esp_ping.h"
+#include "nvs_flash.h"
+#include "nvs.h"
+#include "communication.h"
 
-/// @brief 
-void initialize_ethernet();
-/// @brief 
-/// @return 
-bool ip_obtained();
-
+void initialize_ethernet(void);
+void ip_obtained(void);
+void change_rede(char *ip, char *gateway, char *netmask, char *dns);
+void nvs_erase(void);
+void change_ip(char *ip);
+void change_gateway(char *gateway);
+void change_netmask(char *netmask);
+void change_dns(char *dns);

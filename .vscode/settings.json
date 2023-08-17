@@ -1,5 +1,13 @@
 {
     "idf.adapterTargetName": "esp32",
     "idf.flashType": "UART",
-    "idf.port": "/dev/ttyACM0"
+    "idf.port": "/dev/ttyACM0",
+    "files.associations": {
+        "type_traits": "c",
+        "eth.h": "c",
+        "string.h": "c",
+        "communication.h": "c",
+        "blemanager.h": "c",
+        "socket.h": "c"
+    }
 }

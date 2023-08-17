@@ -1,9 +1,24 @@
 #include "eth.h"
 
-static const char *TAG = "eth_example";
-static const char *ip= "192.168.15.100";
-static const char *gateway = "192.168.15.1";
-static const char *netmask = "255.255.255.0";
+static char *TAG = "eth_example";
+/*
+static char *ip = "192.168.15.100";
+static char *gateway = "192.168.15.1";
+static char *netmask = "255.255.255.0";
+static char *dns = "8.8.8.8";
+*/
+
+char *namespace = "eth_namespace";
+
+char *ip = "";
+char *gateway = "";
+char *netmask = "";
+char *dns = "";
+
+bool flag_ip = true;
+
+esp_eth_handle_t eth_handle_spi;
+esp_netif_t *eth_netif_spi; 
 
 static bool ip_address_obtained = false;
 
@@ -65,8 +80,284 @@ static void got_ip_event_handler(void *arg, esp_event_base_t event_base,
     ip_address_obtained = true;
 }
 
-bool ip_obtained(){
-    return ip_address_obtained;
+void store_ethernet_ip(char *ip){
+    ESP_LOGE("store", "ip: %s", ip);
+    ESP_LOGE("store", "gateway: %s", gateway);
+    ESP_LOGE("store", "netmask: %s", netmask);
+    ESP_LOGE("store", "dns: %s", dns);
+
+    nvs_handle_t ethernet_nvs_handle;
+
+    esp_err_t err = nvs_open(namespace, NVS_READWRITE, &ethernet_nvs_handle);
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "Error opening eth_namespace: %s", esp_err_to_name(err));
+        return;
+    }
+
+    if(ip != NULL){
+        err = nvs_set_str(ethernet_nvs_handle, "ip", ip);
+        if (err != ESP_OK) {
+            ESP_LOGI(TAG, "Error to stage ip: %s", esp_err_to_name(err));
+        }
+    }
+}
+
+void store_ethernet_gateway(char *gateway){
+    ESP_LOGE("store", "ip: %s", ip);
+    ESP_LOGE("store", "gateway: %s", gateway);
+    ESP_LOGE("store", "netmask: %s", netmask);
+    ESP_LOGE("store", "dns: %s", dns);
+
+    nvs_handle_t ethernet_nvs_handle;
+
+    esp_err_t err = nvs_open(namespace, NVS_READWRITE, &ethernet_nvs_handle);
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "Error opening eth_namespace: %s", esp_err_to_name(err));
+        return;
+    }
+
+    if(gateway != NULL){
+        err = nvs_set_str(ethernet_nvs_handle, "gateway", gateway);
+        if (err != ESP_OK) {
+            ESP_LOGI(TAG, "Error to stage gateway, %s", esp_err_to_name(err));
+        }
+    }
+    //nvs_close(ethernet_nvs_handle);
+}
+
+void store_ethernet_netmask(char *netmask){
+    ESP_LOGE("store", "ip: %s", ip);
+    ESP_LOGE("store", "gateway: %s", gateway);
+    ESP_LOGE("store", "netmask: %s", netmask);
+    ESP_LOGE("store", "dns: %s", dns);
+
+    nvs_handle_t ethernet_nvs_handle;
+
+    esp_err_t err = nvs_open(namespace, NVS_READWRITE, &ethernet_nvs_handle);
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "Error opening eth_namespace: %s", esp_err_to_name(err));
+        return;
+    }
+
+    if(netmask != NULL){
+        err = nvs_set_str(ethernet_nvs_handle, "netmask", netmask);
+        if (err != ESP_OK) {
+            ESP_LOGI(TAG, "Error to stage netmask: %s", esp_err_to_name(err));
+        }
+    }
+    //nvs_close(ethernet_nvs_handle);
+}
+
+void store_ethernet_dns(char *dns){
+    ESP_LOGE("store", "ip: %s", ip);
+    ESP_LOGE("store", "gateway: %s", gateway);
+    ESP_LOGE("store", "netmask: %s", netmask);
+    ESP_LOGE("store", "dns: %s", dns);
+
+    nvs_handle_t ethernet_nvs_handle;
+
+    esp_err_t err = nvs_open(namespace, NVS_READWRITE, &ethernet_nvs_handle);
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "Error opening eth_namespace: %s", esp_err_to_name(err));
+        return;
+    }
+
+    if(dns != NULL){
+        err = nvs_set_str(ethernet_nvs_handle, "dns", dns);
+        if (err != ESP_OK) {
+            ESP_LOGI(TAG, "Error to stage dns: %s", esp_err_to_name(err));
+        }
+    }
+    //nvs_close(ethernet_nvs_handle);
+}
+
+void store_ethernet_variables(char *ip, char *gateway, char *netmask, char *dns){
+    ESP_LOGE("store", "ip: %s", ip);
+    ESP_LOGE("store", "gateway: %s", gateway);
+    ESP_LOGE("store", "netmask: %s", netmask);
+    ESP_LOGE("store", "dns: %s", dns);
+
+    nvs_handle_t ethernet_nvs_handle;
+
+    esp_err_t err = nvs_open(namespace, NVS_READWRITE, &ethernet_nvs_handle);
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "Error opening eth_namespace: %s", esp_err_to_name(err));
+        return;
+    }
+
+    if(ip != NULL){
+        err = nvs_set_str(ethernet_nvs_handle, "ip", ip);
+        if (err != ESP_OK) {
+            ESP_LOGI(TAG, "Error to stage ip: %s", esp_err_to_name(err));
+        }
+    }
+
+    if(gateway != NULL){
+        err = nvs_set_str(ethernet_nvs_handle, "gateway", gateway);
+        if (err != ESP_OK) {
+            ESP_LOGI(TAG, "Error to stage gateway, %s", esp_err_to_name(err));
+        }
+    }
+
+    if(netmask != NULL){
+        err = nvs_set_str(ethernet_nvs_handle, "netmask", netmask);
+        if (err != ESP_OK) {
+            ESP_LOGI(TAG, "Error to stage netmask: %s", esp_err_to_name(err));
+        }
+    }
+
+    if(dns != NULL){
+        err = nvs_set_str(ethernet_nvs_handle, "dns", dns);
+        if (err != ESP_OK) {
+            ESP_LOGI(TAG, "Error to stage dns: %s", esp_err_to_name(err));
+        }
+    }
+
+    //nvs_close(ethernet_nvs_handle);
+}
+
+void retrieve_ethernet_variable(void){
+    nvs_handle_t ethernet_nvs_handle;
+
+    esp_err_t err = nvs_open(namespace, NVS_READONLY, &ethernet_nvs_handle);
+    if (err != ESP_OK) {
+        ESP_LOGI(TAG, "Error to open eth_namespace to retrieve");
+        return;
+    }
+
+    char buffer[64]; // Buffer para armazenar as strings recuperadas
+
+    // Recuperar as variáveis
+    size_t required_size;
+    err = nvs_get_str(ethernet_nvs_handle, "ip", NULL, &required_size);
+    if (err == ESP_OK) {
+        if (required_size <= sizeof(buffer)) {
+            err = nvs_get_str(ethernet_nvs_handle, "ip", buffer, &required_size);
+            if (err == ESP_OK) {
+                //free(ip);
+                ip = strdup(buffer); // Aloca memória e copia o valor
+            }
+        } else {
+            ESP_LOGI(TAG, "Error to retrieve ip");
+        }
+    }
+
+    err = nvs_get_str(ethernet_nvs_handle, "gateway", NULL, &required_size);
+    if (err == ESP_OK) {
+        if (required_size <= sizeof(buffer)) {
+            err = nvs_get_str(ethernet_nvs_handle, "gateway", buffer, &required_size);
+            if (err == ESP_OK) {
+                //free(gateway);
+                gateway = strdup(buffer); // Aloca memória e copia o valor
+            }
+        } else {
+            ESP_LOGI(TAG, "Error to retrieve gateway");
+        }
+    }
+
+    err = nvs_get_str(ethernet_nvs_handle, "netmask", NULL, &required_size);
+    if (err == ESP_OK) {
+        if (required_size <= sizeof(buffer)) {
+            err = nvs_get_str(ethernet_nvs_handle, "netmask", buffer, &required_size);
+            if (err == ESP_OK) {
+                //free(netmask);
+                netmask = strdup(buffer); // Aloca memória e copia o valor
+            }
+        } else {
+            ESP_LOGI(TAG, "Error to retrieve netmask");
+        }
+    }
+
+    err = nvs_get_str(ethernet_nvs_handle, "dns", NULL, &required_size);
+    if (err == ESP_OK) {
+        if (required_size <= sizeof(buffer)) {
+            err = nvs_get_str(ethernet_nvs_handle, "dns", buffer, &required_size);
+            if (err == ESP_OK) {
+                //free(dns);
+                dns = strdup(buffer); // Aloca memória e copia o valor
+            }
+        } else {
+            ESP_LOGI(TAG, "Error to retrieve dns");
+        }
+    }
+
+    ESP_LOGE("retrieve", "ip: %s", ip);
+    ESP_LOGE("retrieve", "gateway: %s", gateway);
+    ESP_LOGE("retrieve", "netmask: %s", netmask);
+    ESP_LOGE("retrieve", "dns: %s", dns);
+
+    // Fechar o namespace NVS
+    //nvs_close(ethernet_nvs_handle);
+}
+
+void ip_obtained(void){
+    while (!ip_address_obtained) {
+        vTaskDelay(100 / portTICK_PERIOD_MS);
+    }
+}
+
+void init_rede(void){
+    esp_eth_stop(eth_handle_spi);
+    if(strlen(ip) != 0){
+        esp_netif_dhcpc_stop(eth_netif_spi); // Pare o cliente DHCP para evitar conflitos
+        //Static IP defined 
+        esp_netif_ip_info_t ip_info;
+        memset(&ip_info, 0, sizeof(esp_netif_ip_info_t));
+        ipaddr_aton(ip, &ip_info.ip.addr);
+        ipaddr_aton(gateway, &ip_info.gw.addr);
+        ipaddr_aton(netmask, &ip_info.netmask.addr);
+        esp_netif_set_ip_info(eth_netif_spi, &ip_info); // Defina as informações de IP estático
+        //no caso em IP não será estatico, remover as 6 linhas de código acima
+
+        // Set DNS servers manually (8.8.8.8)
+        esp_netif_dns_info_t dns_info;
+        ipaddr_aton(dns, &dns_info.ip.u_addr.ip4);
+        esp_netif_set_dns_info(eth_netif_spi, ESP_NETIF_DNS_MAIN, &dns_info);
+        flag_ip = false;
+    }
+    else{
+        flag_ip = true;
+    }
+    ESP_LOGI(TAG, "STRLEN(IP)=%d", strlen(ip));
+    ESP_ERROR_CHECK(esp_eth_start(eth_handle_spi));
+    set_message_ip(flag_ip);
+    ip_obtained();
+    status_ip(flag_ip);
+}
+
+void change_rede(char *ip, char *gateway, char *netmask, char *dns){
+    store_ethernet_variables(ip, gateway, netmask, dns);
+    retrieve_ethernet_variable();
+    init_rede();
+}
+
+void change_ip(char *ip){
+    store_ethernet_ip(ip);
+    retrieve_ethernet_variable();
+    init_rede();
+}
+
+void change_gateway(char *gateway){
+    store_ethernet_gateway(gateway);
+    retrieve_ethernet_variable();
+    init_rede();
+}
+
+void change_netmask(char *netmask){
+    store_ethernet_netmask(netmask);
+    retrieve_ethernet_variable();
+    init_rede();
+}
+
+void change_dns(char *dns){
+    store_ethernet_dns(dns);
+    retrieve_ethernet_variable();
+    init_rede();
+}
+
+void nvs_erase(){
+    nvs_flash_erase();
+    init_rede();
 }
 
 void initialize_ethernet(void){
@@ -89,7 +380,7 @@ void initialize_ethernet(void){
         .base = &esp_netif_config,
         .stack = ESP_NETIF_NETSTACK_DEFAULT_ETH
     };
-    esp_netif_t *eth_netif_spi = NULL;
+    eth_netif_spi = NULL;
     char if_key_str[10];
     char if_desc_str[10];
     char num_str[3];
@@ -118,7 +409,7 @@ void initialize_ethernet(void){
     spi_eth_module_config_t spi_eth_module_config;
     INIT_SPI_ETH_MODULE_CONFIG(spi_eth_module_config, 0);
 
-    esp_eth_handle_t eth_handle_spi = NULL;
+    eth_handle_spi = NULL;
 
     spi_device_interface_config_t devcfg = {
         .command_bits = 16, // Actually it's the address phase in W5500 SPI frame
@@ -173,18 +464,8 @@ void initialize_ethernet(void){
     ESP_ERROR_CHECK(esp_event_handler_register(ETH_EVENT, ESP_EVENT_ANY_ID, &eth_event_handler, NULL));
     ESP_ERROR_CHECK(esp_event_handler_register(IP_EVENT, IP_EVENT_ETH_GOT_IP, &got_ip_event_handler, NULL));
     // Registra manipuladores de eventos definidos pelo usuário
+    
+    retrieve_ethernet_variable();
 
-    //esp_netif_dhcpc_stop(eth_netif_spi); // Pare o cliente DHCP para evitar conflitos
-    /*
-    //Static IP defined 
-    esp_netif_ip_info_t ip_info;
-    memset(&ip_info, 0, sizeof(esp_netif_ip_info_t));
-    ipaddr_aton(ip, &ip_info.ip.addr);
-    ipaddr_aton(gateway, &ip_info.gw.addr);
-    ipaddr_aton(netmask, &ip_info.netmask.addr);
-    esp_netif_set_ip_info(eth_netif_spi, &ip_info); // Defina as informações de IP estático
-    //no caso em IP não será estatico, remover as 6 linhas de código acima
-    */
-    ESP_ERROR_CHECK(esp_eth_start(eth_handle_spi));
-    // Inicia a interface Ethernet
+    init_rede();
 }

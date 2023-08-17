@@ -4,6 +4,10 @@
 //#define EXAMPLE_BROKER_URI "mqtt://192.168.15.4:1883"
 //#define EXAMPLE_BROKER_URI "mqtts://192.168.15.4:8883"
 
+static char* publish = "arcelor/status";
+static char* subscribe_message = "arcelor/message";
+static char* subscribe_rede = "arcelor/rede";
+
 #define QOS 2
 static const char *TAG ="MQTTS";
 
@@ -16,7 +20,9 @@ static bool flag_subscribed = false;
 static bool new_message = false;
 static char* payload;
 static char* publish_topic;
-static char* subscribe_topic;
+static char* subscribe_topic_message;
+static char* subscribe_topic_rede;
+
 
 void publish_mqtts(){
     if(flag_connected){
@@ -28,6 +34,7 @@ void publish_mqtts(){
 void publish_messages_task(){
     while (1){
         publish_mqtts(publish_topic);
+        //ESP_LOGI(TAG, "MQTT PUBLISH");
         vTaskDelay(10000 / portTICK_PERIOD_MS);
     }
 }
@@ -48,26 +55,29 @@ static esp_err_t mqtt_event_handler(esp_mqtt_event_handle_t event){
         case MQTT_EVENT_CONNECTED:
             ESP_LOGI(TAG, "MQTT_EVENT_CONNECTED");
             if(flag_subscribed==false){
-                    esp_mqtt_client_subscribe(client, subscribe_topic, QOS);
-                    ESP_LOGI(TAG, "sent subscribe successful.");
+                    esp_mqtt_client_subscribe(client, subscribe_topic_message, QOS);
+                    ESP_LOGI(TAG, "SENT SUBSCRIBE MESSAGE SUCCESSFULL");
+                    esp_mqtt_client_subscribe(client, subscribe_topic_rede, QOS);
+                    ESP_LOGI(TAG, "SENT SUBSCRIBE REDE SUCCESSFULL");
                     flag_subscribed = true;
             }
             flag_connected = true;
             break;
 
         case MQTT_EVENT_DISCONNECTED:
-            ESP_LOGI(TAG, "MQTT_EVENT_DISCONNECTED.");
+            ESP_LOGI(TAG, "MQTT_EVENT_DISCONNECTED");
             flag_connected = false;
             flag_subscribed = false;
+            esp_mqtt_client_start(client); // Tente reconectar
             break;
 
         case MQTT_EVENT_SUBSCRIBED:
-            ESP_LOGI(TAG, "MQTT_EVENT_SUBSCRIBED.");
+            ESP_LOGI(TAG, "MQTT_EVENT_SUBSCRIBED");
             flag_subscribed = true;
             break;
 
         case MQTT_EVENT_PUBLISHED:
-            ESP_LOGI(TAG, "MQTT_EVENT_PUBLISHED.");
+            ESP_LOGI(TAG, "MQTT_EVENT_PUBLISHED");
             break;
 
         case MQTT_EVENT_DATA:
@@ -85,10 +95,14 @@ static esp_err_t mqtt_event_handler(esp_mqtt_event_handle_t event){
             ESP_LOGI(TAG, "MQTT_EVENT_ERROR");
             flag_subscribed = false;
             flag_connected = false;
+            esp_mqtt_client_start(client); // Tente reconectar
             break;
 
         default:
-            ESP_LOGI(TAG, "Other event id:%d", event->event_id);
+            flag_subscribed = false;
+            flag_connected = false;
+            esp_mqtt_client_start(client); // Tente reconectar
+            ESP_LOGI(TAG, "OTHER EVENTS ID:%d", event->event_id);
             break;
     }
     return ESP_OK;
@@ -101,20 +115,17 @@ static void mqtt_app_start(void){
         //.cert_pem =  (const char *)broker_cert_pem_start,
         .username = "tecnologia",
         .password = "128Parsecs!",
-        //.username = "",
-        //.password = "",
-        .lwt_topic = subscribe_topic,
-        .lwt_qos = QOS,
-        .lwt_retain = 0,
-        .keepalive = 60
+        .keepalive = 0
     };
 
     client = esp_mqtt_client_init(&mqtt_cfg);
     esp_mqtt_client_start(client);
+
+
     return;
 }
 
-void initialize_mqtts(char* publish, char* subscribe){
+void initialize_mqtts(){
     esp_log_level_set("*", ESP_LOG_INFO);
     esp_log_level_set("MQTT_CLIENT", ESP_LOG_VERBOSE);
     esp_log_level_set("TRANSPORT_BASE", ESP_LOG_VERBOSE);
@@ -122,7 +133,8 @@ void initialize_mqtts(char* publish, char* subscribe){
     esp_log_level_set("TRANSPORT", ESP_LOG_VERBOSE);
     esp_log_level_set("OUTBOX", ESP_LOG_VERBOSE);
     publish_topic = strdup(publish);
-    subscribe_topic = strdup(subscribe);
+    subscribe_topic_message = strdup(subscribe_message);
+    subscribe_topic_rede = strdup(subscribe_rede);
     mqtt_app_start();
     return;
 }

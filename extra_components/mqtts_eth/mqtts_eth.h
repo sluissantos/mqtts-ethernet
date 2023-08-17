@@ -17,8 +17,8 @@
 #include "lwip/netdb.h"
 #include "esp_log.h"
 #include "mqtt_client.h"
-#include "comunication.h"
+#include "communication.h"
 
-void initialize_mqtts(char* publish, char* subscribe);
+void initialize_mqtts();
 void check_messages_task();
 void publish_messages_task();
