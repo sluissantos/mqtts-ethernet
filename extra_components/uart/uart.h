@@ -4,6 +4,21 @@
 #include <stdlib.h>
 #include <string.h>
 #include "driver/uart.h"
+
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+#include "freertos/event_groups.h"
+#include "esp_system.h"
+#include "esp_log.h"
+#include "sdkconfig.h"
+
+#include "driver/gpio.h"
+#include "sdkconfig.h"
+#include "esp_log.h"
+
+#include "sdkconfig.h"
+#include "esp_log.h"
+
 #define UART0_INSTANCE 0 // verificar circuito
 #define UART0_PIN_RX   1 // verificar circuito
 #define UART0_PIN_TX   2 // verificar circuito

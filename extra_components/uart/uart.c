@@ -6,20 +6,8 @@
  *  Referências:
  *  Desenvolvedor: Henrique Ferreira 
  */
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "freertos/event_groups.h"
-#include "esp_system.h"
-#include "esp_log.h"
-#include "sdkconfig.h"
-#include "uart.h"
-#include "uart.h"
-#include "driver/gpio.h"
-#include "sdkconfig.h"
-#include "esp_log.h"
 
-#include "sdkconfig.h"
-#include "esp_log.h"
+#include "uart.h"
 
 uart_config_t uart_config = UART_CONFIG_DEFAULT();
 int intr_alloc_flags =0;

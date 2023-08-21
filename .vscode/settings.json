@@ -8,6 +8,7 @@
         "string.h": "c",
         "communication.h": "c",
         "blemanager.h": "c",
-        "socket.h": "c"
+        "socket.h": "c",
+        "uart.h": "c"
     }
 }
