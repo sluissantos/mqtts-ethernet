@@ -69,6 +69,8 @@ void init_main(void){
     initialize_mqtts();
     bleManagerInit();
     bleuartServerInit(0x0010);
+    
+    vTaskDelay(2000/portTICK_PERIOD_MS);
 }
 
 void app_main(void){
@@ -89,6 +91,4 @@ void app_main(void){
     // Cria task para realizar a checagem de conexão dos dispositivos BLE (Perfiérico + UART) //500ms  300 
     xTaskCreatePinnedToCore(deviceConnectionTask,"DEVICE",(1024 *10),NULL,1,&deviceConnTask_handler,0);
     configASSERT(deviceConnTask_handler);
-
-   vTaskDelay(2000/portTICK_PERIOD_MS);
 }
