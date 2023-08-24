@@ -62,14 +62,13 @@ void init_main(void){
     }
 
     set_mac_variable(macAddress);
-
     uartInit(UART2_INSTANCE);
     initialize_comunication();
     initialize_ethernet();
     initialize_mqtts();
     bleManagerInit();
     bleuartServerInit(0x0010);
-    
+
     vTaskDelay(2000/portTICK_PERIOD_MS);
 }
 
