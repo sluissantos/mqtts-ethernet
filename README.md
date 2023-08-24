@@ -83,10 +83,16 @@ Após uma conexão de rede ser estabelecida, automaticamente será subscrevido o
   "gateway":"192.168.15.1",
   "netmask":"255.255.255.0",
   "dns":"8.8.8.8",
-  "erase":0
 }
 ```
 Através dos valores definidos para esses objetos, será definido os valores da rede (estática) e que serão gravados na memória flash, sendo esse o default após qualquer reinicialização.
+É possível setar cada parâmetro individualmente, bastando somente enviar o objeto desejado. 
+Exemplo:
+```
+{
+  "ip":"192.168.15.100"
+}
+```
 
 **Objeto "erase"**
 Para limpar os valores da memória e definir um ip automático, mandar um json com o objeto ```"erase":1```. Caso esse objeto seja diferente de 0, o restantes da mensagem é ignorada. Exemplo:
