@@ -47,7 +47,6 @@ void init_main(void){
         return;
     }
 
-
     // Formatar e imprimir o endereço MAC
     char macAddress[30];
     snprintf(macAddress, sizeof(macAddress), "arcelor/%02X:%02X:%02X:%02X:%02X:%02X",
