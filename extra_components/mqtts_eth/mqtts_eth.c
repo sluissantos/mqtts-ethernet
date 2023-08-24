@@ -1,5 +1,6 @@
 #include "mqtts_eth.h"
 
+#define QOS 2
 #define EXAMPLE_BROKER_URI "mqtt://gwqa.revolog.com.br:1884"
 //#define EXAMPLE_BROKER_URI "mqtt://192.168.15.4:1883"
 //#define EXAMPLE_BROKER_URI "mqtts://192.168.15.4:8883"
@@ -8,7 +9,6 @@ static char* publish = "arcelor/status";
 static char* subscribe_message = "arcelor/message";
 static char* subscribe_rede = "arcelor/rede";
 
-#define QOS 2
 static const char *TAG ="MQTTS";
 
 extern const uint8_t broker_cert_pem_start[] asm("_binary_broker_ca_pem_start");
@@ -22,6 +22,7 @@ static char* payload;
 static char* publish_topic;
 static char* subscribe_topic_message;
 static char* subscribe_topic_rede;
+static char* subscribe_topic_mac;
 
 
 void publish_mqtts(){
@@ -59,6 +60,8 @@ static esp_err_t mqtt_event_handler(esp_mqtt_event_handle_t event){
                     ESP_LOGI(TAG, "SENT SUBSCRIBE MESSAGE SUCCESSFULL");
                     esp_mqtt_client_subscribe(client, subscribe_topic_rede, QOS);
                     ESP_LOGI(TAG, "SENT SUBSCRIBE REDE SUCCESSFULL");
+                    esp_mqtt_client_subscribe(client, subscribe_topic_mac, QOS);
+                    ESP_LOGI(TAG, "SENT SUBSCRIBE MAC SUCCESSFULL");
                     flag_subscribed = true;
             }
             flag_connected = true;
@@ -125,6 +128,10 @@ static void mqtt_app_start(void){
     return;
 }
 
+void set_mac_variable(char *mac){
+    subscribe_topic_mac = strdup(mac);
+}
+
 void initialize_mqtts(){
     esp_log_level_set("*", ESP_LOG_INFO);
     esp_log_level_set("MQTT_CLIENT", ESP_LOG_VERBOSE);
@@ -135,6 +142,7 @@ void initialize_mqtts(){
     publish_topic = strdup(publish);
     subscribe_topic_message = strdup(subscribe_message);
     subscribe_topic_rede = strdup(subscribe_rede);
+
     mqtt_app_start();
     return;
 }

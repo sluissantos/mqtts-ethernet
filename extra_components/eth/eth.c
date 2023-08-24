@@ -100,6 +100,15 @@ void store_ethernet_ip(char *ip){
             ESP_LOGI(TAG, "Error to stage ip: %s", esp_err_to_name(err));
         }
     }
+
+    // Efetivamente escrever as alterações no armazenamento permanente
+    err = nvs_commit(ethernet_nvs_handle);
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "Error committing NVS ip changes: %s", esp_err_to_name(err));
+    }
+
+    nvs_close(ethernet_nvs_handle);
+
 }
 
 void store_ethernet_gateway(char *gateway){
@@ -122,7 +131,14 @@ void store_ethernet_gateway(char *gateway){
             ESP_LOGI(TAG, "Error to stage gateway, %s", esp_err_to_name(err));
         }
     }
-    //nvs_close(ethernet_nvs_handle);
+
+    // Efetivamente escrever as alterações no armazenamento permanente
+    err = nvs_commit(ethernet_nvs_handle);
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "Error committing NVS gateway changes: %s", esp_err_to_name(err));
+    }
+
+    nvs_close(ethernet_nvs_handle);
 }
 
 void store_ethernet_netmask(char *netmask){
@@ -145,7 +161,14 @@ void store_ethernet_netmask(char *netmask){
             ESP_LOGI(TAG, "Error to stage netmask: %s", esp_err_to_name(err));
         }
     }
-    //nvs_close(ethernet_nvs_handle);
+
+    // Efetivamente escrever as alterações no armazenamento permanente
+    err = nvs_commit(ethernet_nvs_handle);
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "Error committing NVS netmask changes: %s", esp_err_to_name(err));
+    }
+
+    nvs_close(ethernet_nvs_handle);
 }
 
 void store_ethernet_dns(char *dns){
@@ -168,7 +191,14 @@ void store_ethernet_dns(char *dns){
             ESP_LOGI(TAG, "Error to stage dns: %s", esp_err_to_name(err));
         }
     }
-    //nvs_close(ethernet_nvs_handle);
+
+    // Efetivamente escrever as alterações no armazenamento permanente
+    err = nvs_commit(ethernet_nvs_handle);
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "Error committing NVS dns changes: %s", esp_err_to_name(err));
+    }
+
+    nvs_close(ethernet_nvs_handle);
 }
 
 void store_ethernet_variables(char *ip, char *gateway, char *netmask, char *dns){
@@ -213,7 +243,13 @@ void store_ethernet_variables(char *ip, char *gateway, char *netmask, char *dns)
         }
     }
 
-    //nvs_close(ethernet_nvs_handle);
+    // Efetivamente escrever as alterações no armazenamento permanente
+    err = nvs_commit(ethernet_nvs_handle);
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "Error committing NVS rede changes: %s", esp_err_to_name(err));
+    }
+
+    nvs_close(ethernet_nvs_handle);
 }
 
 void retrieve_ethernet_variable(void){
@@ -287,7 +323,7 @@ void retrieve_ethernet_variable(void){
     ESP_LOGE("retrieve", "dns: %s", dns);
 
     // Fechar o namespace NVS
-    //nvs_close(ethernet_nvs_handle);
+    nvs_close(ethernet_nvs_handle);
 }
 
 void ip_obtained(void){
@@ -318,7 +354,6 @@ void init_rede(void){
     else{
         flag_ip = true;
     }
-    ESP_LOGI(TAG, "STRLEN(IP)=%d", strlen(ip));
     ESP_ERROR_CHECK(esp_eth_start(eth_handle_spi));
     set_message_ip(flag_ip);
     ip_obtained();
@@ -358,6 +393,7 @@ void change_dns(char *dns){
 void nvs_erase(){
     nvs_flash_erase();
     init_rede();
+    initialize_comunication();
 }
 
 void initialize_ethernet(void){

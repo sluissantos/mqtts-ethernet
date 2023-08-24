@@ -18,7 +18,9 @@
 #include "esp_log.h"
 #include "mqtt_client.h"
 #include "communication.h"
+#include "esp_wifi.h"
 
-void initialize_mqtts();
+void initialize_mqtts(void);
 void check_messages_task();
 void publish_messages_task();
+void set_mac_variable(char *mac);

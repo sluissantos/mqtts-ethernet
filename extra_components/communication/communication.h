@@ -26,6 +26,8 @@
 #include "sdkconfig.h"
 #include "cJSON.h"
 #include "eth.h"
+#include "nvs.h"
+#include "nvs_flash.h"
 
 #define COMM_INTERFACE_UART 0
 #define COMM_INTERFACE_BLE_SERVER  1  
@@ -73,8 +75,9 @@ int8_t commBufferPush(uint8_t  interface,uint8_t * newData);
 void commSendDataInterface(uint8_t *Dado, uint8_t length);
 void set_variables(char *payload);
 void commSendHexDataWithDelay(void);
-void initialize_comunication(uint8_t id_d);
+void initialize_comunication();
 void set_message_ip(bool flag);
 void status_ip(bool flag_ip);
+void store_communication_id(uint8_t id);
 
 #endif

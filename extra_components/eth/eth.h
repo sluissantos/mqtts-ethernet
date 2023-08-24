@@ -17,6 +17,7 @@
 #include "nvs_flash.h"
 #include "nvs.h"
 #include "communication.h"
+#include "mqtts_eth.h"
 
 void initialize_ethernet(void);
 void ip_obtained(void);

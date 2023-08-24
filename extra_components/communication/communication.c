@@ -14,6 +14,14 @@ uint8_t CusorEscritaPacote = 0;
 uint8_t TamanhoNovoPacote = 0;
 uint8_t lengthDataUart = 0;
 
+static const char *TAG ="COMMUNICATION";
+char *name_space = "comm_namespace";
+
+uint8_t id_default = 1;
+
+uint8_t id_nvs;
+
+uint8_t define_id = 3;
 uint8_t id;
 uint8_t id_display;
 uint8_t left;
@@ -30,6 +38,7 @@ uint8_t* data = 0;
 size_t dataLen;
 bool status = false;
 bool status_rede = false;
+bool status_id = false;
 
 void parse_json(const char* jsonString) {
     cJSON* json = cJSON_Parse(jsonString);
@@ -128,8 +137,16 @@ void parse_json(const char* jsonString) {
         flag_erase = 0;
     }
 
+    cJSON* define_id_object = cJSON_GetObjectItem(json, "define");
+    if (define_id_object != NULL) {
+        define_id = define_id_object->valueint;
+        status_id = true;
+    } else {
+        define_id = 3;
+    }
 
-    if(ip != NULL || gateway != NULL || netmask != NULL || dns != NULL || flag_erase == 1 ){
+
+    if(ip != NULL || gateway != NULL || netmask != NULL || dns != NULL || flag_erase == 1){
         status_rede = true;
     }
 
@@ -284,9 +301,67 @@ void commUpdateBufferTask(void *pvParameter) {
     }
 }
 
+void store_communication_id(uint8_t id) {
+    ESP_LOGE("store", "id: %d", id);
+
+    nvs_handle_t communication_nvs_handle;
+
+    esp_err_t err = nvs_open(name_space, NVS_READWRITE, &communication_nvs_handle);
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "Error opening communication_namespace: %s", esp_err_to_name(err));
+        return;
+    }
+
+    err = nvs_set_u8(communication_nvs_handle, "id_nvs", id);
+    if (err != ESP_OK) {
+        ESP_LOGI(TAG, "Error to store id: %s", esp_err_to_name(err));
+    }
+
+    // Efetivamente escrever as alterações no armazenamento permanente
+    err = nvs_commit(communication_nvs_handle);
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "Error committing NVS changes: %s", esp_err_to_name(err));
+    }
+
+    nvs_close(communication_nvs_handle);
+}
+
+void retrieve_communication_id(void) {
+    nvs_handle_t communication_nvs_handle;
+
+    esp_err_t err = nvs_open(name_space, NVS_READONLY, &communication_nvs_handle);
+    if (err != ESP_OK) {
+        ESP_LOGI(TAG, "Error to open communication_namespace to retrieve");
+        return;
+    }
+
+    // Recuperar a variável id_nvs
+    err = nvs_get_u8(communication_nvs_handle, "id_nvs", &id_nvs);
+    if (err != ESP_OK) {
+        id_nvs = id_default;
+        ESP_LOGI(TAG, "Error to retrieve id_nvs");
+    }
+
+    ESP_LOGE("retrieve", "id_nvs: %d", id_nvs);
+
+    // Efetivamente escrever as alterações no armazenamento permanente
+    err = nvs_commit(communication_nvs_handle);
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "Error committing NVS changes: %s", esp_err_to_name(err));
+    }
+    
+    nvs_close(communication_nvs_handle);
+}
+
 void commUpdateRedeTask(void *pvParameter) {
     while (1) {
-        if(status_rede){
+        if(status_id){
+            ESP_LOGI("COMM","entrou aqui. define_d=%d", define_id);
+            store_communication_id(define_id);
+            initialize_comunication();
+            status_id = false;
+        }
+        else if(status_rede){
             if(flag_erase){
                 nvs_erase();
                 flag_erase = 0;
@@ -327,6 +402,8 @@ void status_ip(bool flag_ip){
     send_data(data_stop, sizeof(data_stop));
 }
 
-void initialize_comunication(uint8_t id_d){
-    id_display = id_d;
+void initialize_comunication(){
+    id_nvs = id_default;
+    retrieve_communication_id();
+    id_display = id_nvs;
 }

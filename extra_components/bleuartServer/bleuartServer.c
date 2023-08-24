@@ -297,6 +297,10 @@ static void gatts_uart_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t g
                 else if ((int)param->write.value[0] == 6){
                     nvs_erase();
                 }
+                else if ((int)param->write.value[0] == 7){
+                    store_communication_id((int)param->write.value[1]);
+                    initialize_comunication();
+                }
     
                 else{
                     ESP_LOGI(GATTS_TAG, "OPCODE DESCONHECIDO");

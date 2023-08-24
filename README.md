@@ -84,13 +84,21 @@ Após uma conexão de rede ser estabelecida, automaticamente será subscrevido o
   "netmask":"255.255.255.0",
   "dns":"8.8.8.8",
   "erase":0
-
 }
 ```
 Através dos valores definidos para esses objetos, será definido os valores da rede (estática) e que serão gravados na memória flash, sendo esse o default após qualquer reinicialização.
 
 **Objeto "erase"**
-Para limpar os valores da memória e definir um ip automático, mandar um json com o objeto ```"erase":1```. Caso esse objeto seja diferente de 0, o restantes da mensagem é ignorada.
+Para limpar os valores da memória e definir um ip automático, mandar um json com o objeto ```"erase":1```. Caso esse objeto seja diferente de 0, o restantes da mensagem é ignorada. Exemplo:
+```
+{
+  "erase":0
+}
+```
+
+## IMPORNTANTE
+**TANTO AS CONFIGURAÇÕES DA REDE QUANTO A DEFINIÇÃO DO ID DO PAINEL QUE POR VENTURA TENHA SIDO MUDADA IRÃO SER APAGADAS.**
+**ATÉ O MOMENTO, É SUGERÍVEL ESTABELECER QUAL TIPO DE CONEXÇÃO (AUTOMÁTICA OU ESTÁTICA) PRIMEIRAMENTE E DEPOIS, REDEFINIR O ID DO PAINEL, CASO NECESSÁRIO**
 
 ### Definir ip a partir de uma mensagem bluetooth
 Após estabelecer uma conexão bluetooth com o dispositivo, haverá a possibilidade de setar os parâmetros da rede por mensagem pré-definidas.
@@ -127,6 +135,25 @@ Exemplo: ```08080808``` = 8.8.8.8.
 Realiza um erase na memória flash, limpando todos os parâmetros de rede uma vez setados.
 Exemplo: ```06``` = clean flash memory. Após esse comando, será tentada uma conexão de rede com ip automático.
 
+**opcode 07**
+Realiza a definição do id do display. Esse id será armazenado na memória interna do esp32 e será definido como padrão após qualquer reinicialização. Para limpar, realizar um erase.
+Exemplo: ```0700``` = ao enviar esse comando em HEXA, é definido que o ip do display será 0 (definido através do segundo hexadecimal enviado).
+
+
+### Definir o ID do display através de uma mensagem MQTT
+Quando a aplicação é inicializada, ela automaticamente se subscreve no tópico `"arcelor/'MAC-WIFI"`.
+Para definir qual o id do display, basta enviar uma mensagem mqtt para esse tópico informando qual será o id do display conectado ao esp32 que possui tal MAC.
+Exemplo: **tópico: arcelor/A0:B7:65:61:78:C0**
+
+```
+{
+  "define":1
+}
+```
+Com essa mensagem, definimos que o id do display será 1 (display central). Lembrando que os id's disponíveis são:
+id=0, display mais à esquerda;
+id=1, display central (maior display que também exibirá a placa);
+id=2, display mais à direita.
 
 ### Definir as mensagens exibidas no painel
 Há duas formas de exibição padrão já setadas, uma que o intuito inicial é mostrar um placa de veículo e informar em qual direção seguir.

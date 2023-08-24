@@ -9,6 +9,8 @@
         "communication.h": "c",
         "blemanager.h": "c",
         "socket.h": "c",
-        "uart.h": "c"
+        "uart.h": "c",
+        "mqtts_eth.h": "c",
+        "stdio.h": "c"
     }
 }
