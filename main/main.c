@@ -63,6 +63,8 @@ void init_main(void){
     set_mac_variable(macAddress);
     uartInit(UART2_INSTANCE);
     initialize_comunication();
+    bleManagerInit();
+    bleuartServerInit(0x0010);
     initialize_ethernet();
     initialize_mqtts();
     bleManagerInit();
