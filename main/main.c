@@ -60,6 +60,7 @@ void init_main(void){
         return;
     }
 
+    //chamadas de configuracao
     set_mac_variable(macAddress);
     uartInit(UART2_INSTANCE);
     initialize_comunication();
