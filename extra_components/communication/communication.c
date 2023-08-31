@@ -363,8 +363,9 @@ void commUpdateRedeTask(void *pvParameter) {
         }
         else if(status_rede){
             if(flag_erase){
-                nvs_erase();
                 flag_erase = 0;
+                nvs_flash_erase();
+                esp_restart();
             }
             else{
                 change_rede(ip, gateway, netmask, dns);

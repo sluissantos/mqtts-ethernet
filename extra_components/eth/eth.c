@@ -81,11 +81,6 @@ static void got_ip_event_handler(void *arg, esp_event_base_t event_base,
 }
 
 void store_ethernet_ip(char *ip){
-    ESP_LOGE("store", "ip: %s", ip);
-    ESP_LOGE("store", "gateway: %s", gateway);
-    ESP_LOGE("store", "netmask: %s", netmask);
-    ESP_LOGE("store", "dns: %s", dns);
-
     nvs_handle_t ethernet_nvs_handle;
 
     esp_err_t err = nvs_open(namespace, NVS_READWRITE, &ethernet_nvs_handle);
@@ -99,6 +94,9 @@ void store_ethernet_ip(char *ip){
         if (err != ESP_OK) {
             ESP_LOGI(TAG, "Error to stage ip: %s", esp_err_to_name(err));
         }
+        else{
+            ESP_LOGE("store", "ip: %s", ip);
+        }
     }
 
     // Efetivamente escrever as alterações no armazenamento permanente
@@ -108,15 +106,9 @@ void store_ethernet_ip(char *ip){
     }
 
     nvs_close(ethernet_nvs_handle);
-
 }
 
 void store_ethernet_gateway(char *gateway){
-    ESP_LOGE("store", "ip: %s", ip);
-    ESP_LOGE("store", "gateway: %s", gateway);
-    ESP_LOGE("store", "netmask: %s", netmask);
-    ESP_LOGE("store", "dns: %s", dns);
-
     nvs_handle_t ethernet_nvs_handle;
 
     esp_err_t err = nvs_open(namespace, NVS_READWRITE, &ethernet_nvs_handle);
@@ -129,6 +121,9 @@ void store_ethernet_gateway(char *gateway){
         err = nvs_set_str(ethernet_nvs_handle, "gateway", gateway);
         if (err != ESP_OK) {
             ESP_LOGI(TAG, "Error to stage gateway, %s", esp_err_to_name(err));
+        }
+        else{
+            ESP_LOGE("store", "gateway: %s", gateway);
         }
     }
 
@@ -142,11 +137,6 @@ void store_ethernet_gateway(char *gateway){
 }
 
 void store_ethernet_netmask(char *netmask){
-    ESP_LOGE("store", "ip: %s", ip);
-    ESP_LOGE("store", "gateway: %s", gateway);
-    ESP_LOGE("store", "netmask: %s", netmask);
-    ESP_LOGE("store", "dns: %s", dns);
-
     nvs_handle_t ethernet_nvs_handle;
 
     esp_err_t err = nvs_open(namespace, NVS_READWRITE, &ethernet_nvs_handle);
@@ -159,6 +149,9 @@ void store_ethernet_netmask(char *netmask){
         err = nvs_set_str(ethernet_nvs_handle, "netmask", netmask);
         if (err != ESP_OK) {
             ESP_LOGI(TAG, "Error to stage netmask: %s", esp_err_to_name(err));
+        }
+        else{
+            ESP_LOGE("store", "netmask: %s", netmask);
         }
     }
 
@@ -172,11 +165,6 @@ void store_ethernet_netmask(char *netmask){
 }
 
 void store_ethernet_dns(char *dns){
-    ESP_LOGE("store", "ip: %s", ip);
-    ESP_LOGE("store", "gateway: %s", gateway);
-    ESP_LOGE("store", "netmask: %s", netmask);
-    ESP_LOGE("store", "dns: %s", dns);
-
     nvs_handle_t ethernet_nvs_handle;
 
     esp_err_t err = nvs_open(namespace, NVS_READWRITE, &ethernet_nvs_handle);
@@ -189,6 +177,9 @@ void store_ethernet_dns(char *dns){
         err = nvs_set_str(ethernet_nvs_handle, "dns", dns);
         if (err != ESP_OK) {
             ESP_LOGI(TAG, "Error to stage dns: %s", esp_err_to_name(err));
+        }
+        else{
+            ESP_LOGE("store", "dns: %s", dns);
         }
     }
 
@@ -202,11 +193,6 @@ void store_ethernet_dns(char *dns){
 }
 
 void store_ethernet_variables(char *ip, char *gateway, char *netmask, char *dns){
-    ESP_LOGE("store", "ip: %s", ip);
-    ESP_LOGE("store", "gateway: %s", gateway);
-    ESP_LOGE("store", "netmask: %s", netmask);
-    ESP_LOGE("store", "dns: %s", dns);
-
     nvs_handle_t ethernet_nvs_handle;
 
     esp_err_t err = nvs_open(namespace, NVS_READWRITE, &ethernet_nvs_handle);
@@ -220,12 +206,18 @@ void store_ethernet_variables(char *ip, char *gateway, char *netmask, char *dns)
         if (err != ESP_OK) {
             ESP_LOGI(TAG, "Error to stage ip: %s", esp_err_to_name(err));
         }
+        else{
+            ESP_LOGE("store", "ip: %s", ip);
+        }
     }
 
     if(gateway != NULL){
         err = nvs_set_str(ethernet_nvs_handle, "gateway", gateway);
         if (err != ESP_OK) {
             ESP_LOGI(TAG, "Error to stage gateway, %s", esp_err_to_name(err));
+        }
+        else{
+            ESP_LOGE("store", "gateway: %s", gateway);
         }
     }
 
@@ -234,12 +226,18 @@ void store_ethernet_variables(char *ip, char *gateway, char *netmask, char *dns)
         if (err != ESP_OK) {
             ESP_LOGI(TAG, "Error to stage netmask: %s", esp_err_to_name(err));
         }
+        else{
+            ESP_LOGE("store", "netmask: %s", netmask);
+        }
     }
 
     if(dns != NULL){
         err = nvs_set_str(ethernet_nvs_handle, "dns", dns);
         if (err != ESP_OK) {
             ESP_LOGI(TAG, "Error to stage dns: %s", esp_err_to_name(err));
+        }
+        else{
+            ESP_LOGE("store", "dns: %s", dns);
         }
     }
 
@@ -270,11 +268,12 @@ void retrieve_ethernet_variable(void){
         if (required_size <= sizeof(buffer)) {
             err = nvs_get_str(ethernet_nvs_handle, "ip", buffer, &required_size);
             if (err == ESP_OK) {
-                //free(ip);
                 ip = strdup(buffer); // Aloca memória e copia o valor
+                ESP_LOGE("retrieve", "ip: %s", ip);
             }
-        } else {
-            ESP_LOGI(TAG, "Error to retrieve ip");
+            else {
+                ESP_LOGI(TAG, "Error to retrieve ip");
+            }
         }
     }
 
@@ -283,11 +282,12 @@ void retrieve_ethernet_variable(void){
         if (required_size <= sizeof(buffer)) {
             err = nvs_get_str(ethernet_nvs_handle, "gateway", buffer, &required_size);
             if (err == ESP_OK) {
-                //free(gateway);
                 gateway = strdup(buffer); // Aloca memória e copia o valor
+                ESP_LOGE("retrieve", "gateway: %s", gateway);   
             }
-        } else {
-            ESP_LOGI(TAG, "Error to retrieve gateway");
+            else {
+                ESP_LOGI(TAG, "Error to retrieve gateway");
+            }
         }
     }
 
@@ -296,11 +296,12 @@ void retrieve_ethernet_variable(void){
         if (required_size <= sizeof(buffer)) {
             err = nvs_get_str(ethernet_nvs_handle, "netmask", buffer, &required_size);
             if (err == ESP_OK) {
-                //free(netmask);
                 netmask = strdup(buffer); // Aloca memória e copia o valor
+                ESP_LOGE("retrieve", "netmask: %s", netmask);
             }
-        } else {
-            ESP_LOGI(TAG, "Error to retrieve netmask");
+            else {
+                ESP_LOGI(TAG, "Error to retrieve netmask");
+            }
         }
     }
 
@@ -309,18 +310,14 @@ void retrieve_ethernet_variable(void){
         if (required_size <= sizeof(buffer)) {
             err = nvs_get_str(ethernet_nvs_handle, "dns", buffer, &required_size);
             if (err == ESP_OK) {
-                //free(dns);
                 dns = strdup(buffer); // Aloca memória e copia o valor
+                ESP_LOGE("retrieve", "dns: %s", dns);
             }
-        } else {
-            ESP_LOGI(TAG, "Error to retrieve dns");
+            else {
+                ESP_LOGI(TAG, "Error to retrieve dns");
+            }
         }
     }
-
-    ESP_LOGE("retrieve", "ip: %s", ip);
-    ESP_LOGE("retrieve", "gateway: %s", gateway);
-    ESP_LOGE("retrieve", "netmask: %s", netmask);
-    ESP_LOGE("retrieve", "dns: %s", dns);
 
     // Fechar o namespace NVS
     nvs_close(ethernet_nvs_handle);
@@ -356,7 +353,9 @@ void init_rede(void){
     }
     ESP_ERROR_CHECK(esp_eth_start(eth_handle_spi));
     set_message_ip(flag_ip);
-    ip_obtained();
+    if(flag_ip){
+        ip_obtained();
+    }
     status_ip(flag_ip);
 }
 

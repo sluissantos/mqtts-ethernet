@@ -246,7 +246,6 @@ static void gatts_uart_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t g
                 ESP_LOGI(GATTS_TAG, "message=%.*s", param->write.len, param->write.value);
                 esp_log_buffer_hex("ReceivData", param->write.value, param->write.len);
                 if ((int)param->write.value[0] == 0){
-                    ESP_LOGI(GATTS_TAG, "entrou aqui mensagem total");
                     char* ip_string = (char*)malloc(16);
                     snprintf(ip_string, 16, "%d.%d.%d.%d", param->write.value[1], param->write.value[2], param->write.value[3], param->write.value[4]);
                     ESP_LOGI(GATTS_TAG, "ip_string = %s", ip_string);
@@ -295,7 +294,9 @@ static void gatts_uart_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t g
                 }
 
                 else if ((int)param->write.value[0] == 6){
-                    nvs_erase();
+                    ESP_LOGI("BLUE", "ENTROU AQUI");
+                    nvs_flash_erase();
+                    esp_restart();
                 }
                 else if ((int)param->write.value[0] == 7){
                     store_communication_id((int)param->write.value[1]);

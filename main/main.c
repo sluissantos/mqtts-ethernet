@@ -10,7 +10,6 @@
 #include "esp_wifi.h"
 #include "esp_log.h"
 
-
 TaskHandle_t check_messages_task_handler;
 TaskHandle_t publish_messages_task_handler;
 TaskHandle_t commUpdateBufferTask_handler;
@@ -68,9 +67,7 @@ void init_main(void){
     bleuartServerInit(0x0010);
     initialize_ethernet();
     initialize_mqtts();
-    bleManagerInit();
-    bleuartServerInit(0x0010);
-
+    
     vTaskDelay(2000/portTICK_PERIOD_MS);
 }
 
