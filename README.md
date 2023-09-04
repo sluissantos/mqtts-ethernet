@@ -42,7 +42,7 @@ GND  - GND
 GND     - PRETO
 RX UART - VERDE
 ```
-<img src="resouce/conectado.png" alt="Conector.">
+<img src="resouce/conector.png" alt="Conector.">
 
 <img src="resouce/exemplo.png" alt="Portótipo montado.">
 
