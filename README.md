@@ -33,7 +33,20 @@ MOSI - 23
 MISO - 19
 CS0  -  5
 INT0 -  4
+GND  - GND
+5V   - 5V
 ```
+**IMPORTANTE: A ALIMENTAÇÃO DE TODOS OS COMPONENTES DERIVA DO DISPLAY. ENTÃO OS PINOS DE ALIMENTAÇÃO 5V DO ESP32 E DO W5500 DEVEM ESTAR CONECTADOS AO 5V DO DISPLAY**
+```
+5V      - VERMELHO
+GND     - PRETO
+RX UART - VERDE
+```
+<img src="resouce/conectado.png" alt="Conector.">
+
+<img src="resouce/exemplo.png" alt="Portótipo montado.">
+
+
 Esses valores devem ser setados através do menuconfig da aplicação. Para isso, entre com 'idf.py menuconfig' no terminal do ESP-IDF. Na aba interativa que aparecer, vá em Example Configuration. Marque a opção 'SPI ETHERNET' e nas opções abaixo, informe que o Módulo a ser usado será o W5500. No exemplo, foi usado 'SPI clock speed (MHz)=12' e 'PHY Reset GPIO=-1'. Após isso, as configurações iniciais para uso do módulo terminaram.
 A TAG do LOGI utilizada é "eth_example". Um manipulador de eventos está setado para verificar a conexão: caso a conexão seja perdida, ela será reestabelecida automaticamente quando possível.
 OBSERVAÇÃO IMPORTANTE:
