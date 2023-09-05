@@ -87,7 +87,7 @@ Já essa mensagem irá aparecer quando for setado um ip específico (variável `
 **🔒**
 Essa mensagem irá aparecer sempre que não for setada nenhuma mensagem de texto no display ou depois de que uma nova conexao seja estabelecida.
 
-### Definindo ip a partir de uma mensagem MQTT
+### Definindo IP a partir de uma mensagem MQTT
 Após uma conexão de rede ser estabelecida, automaticamente será subscrevido o tópico `arcelor/rede`. O padrão de mensagem a ser enviado é:
 
 ```
@@ -115,7 +115,7 @@ Para limpar os valores da memória e definir um ip automático, mandar um json c
 }
 ```
 
-## IMPORNTANTE
+## IMPORTANTE
 **TANTO AS CONFIGURAÇÕES DA REDE QUANTO A DEFINIÇÃO DO ID DO PAINEL QUE POR VENTURA TENHA SIDO MUDADA IRÃO SER APAGADAS.**
 **ATÉ O MOMENTO, É SUGERÍVEL ESTABELECER QUAL TIPO DE CONEXÇÃO (AUTOMÁTICA OU ESTÁTICA) PRIMEIRAMENTE E DEPOIS, REDEFINIR O ID DO PAINEL, CASO NECESSÁRIO**
 
