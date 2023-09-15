@@ -24,3 +24,4 @@ void initialize_mqtts(void);
 void check_messages_task();
 void publish_messages_task();
 void set_mac_variable(char *mac);
+void set_id(uint8_t ident);

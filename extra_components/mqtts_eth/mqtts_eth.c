@@ -23,11 +23,17 @@ static char* publish_topic;
 static char* subscribe_topic_message;
 static char* subscribe_topic_rede;
 static char* subscribe_topic_mac;
+uint8_t id;
+char status_message[40];
 
+void set_id(uint8_t ident){
+    id = ident;
+}
 
 void publish_mqtts(){
     if(flag_connected){
-        esp_mqtt_client_publish(client, publish_topic, "Ok", 0, QOS, 1);
+        sprintf(status_message,"\"display_id\":%d\n\"status\":\"ok\"", id);
+        esp_mqtt_client_publish(client, publish_topic, status_message, 0, QOS, 1);
     }
     return;
 }
@@ -50,6 +56,8 @@ void check_messages_task(){
 		taskYIELD();
     }
 }
+
+
 
 static esp_err_t mqtt_event_handler(esp_mqtt_event_handle_t event){
     switch (event->event_id) {

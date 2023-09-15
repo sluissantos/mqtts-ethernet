@@ -407,4 +407,5 @@ void initialize_comunication(){
     id_nvs = id_default;
     retrieve_communication_id();
     id_display = id_nvs;
+    set_id(id_display);
 }

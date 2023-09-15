@@ -19,7 +19,7 @@ Para esse projeto, é necessário ter:
 -Broker MQTT/MQTTS em execução. Em caso de Broker MQTTS, é necessário ter o arquivo do certificado do servidor(CA).
 -Level Shifter para converter, em fase, o sinal 3.3V para 5V (TX). Foram confeccionados manualmente usando dois transistores, um resistor de 1K e dois resistores de 10K.
 
-<img src="resouce/level_shifter.png" alt="Level Shifter">
+<img src="resource/level_shifter.png" alt="Level Shifter">
 
 
 ### 🖱️ Componentes
@@ -42,9 +42,9 @@ GND  - GND
 GND     - PRETO
 RX UART - VERDE
 ```
-<img src="resouce/conector.png" alt="Conector.">
+<img src="resource/conector.png" alt="Conector.">
 
-<img src="resouce/exemplo.png" alt="Portótipo montado.">
+<img src="resource/exemplo.png" alt="Protótipo montado.">
 
 
 Esses valores devem ser setados através do menuconfig da aplicação. Para isso, entre com 'idf.py menuconfig' no terminal do ESP-IDF. Na aba interativa que aparecer, vá em Example Configuration. Marque a opção 'SPI ETHERNET' e, nas opções abaixo, informe que o Módulo a ser usado será o W5500. No exemplo, foi usado 'SPI clock speed (MHz)=12' e 'PHY Reset GPIO=-1'. Após isso, as configurações iniciais para uso do módulo terminaram.
