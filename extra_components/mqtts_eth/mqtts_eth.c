@@ -2,7 +2,7 @@
 
 #define QOS 2
 #define EXAMPLE_BROKER_URI "mqtt://gwqa.revolog.com.br:1884"
-//#define EXAMPLE_BROKER_URI "mqtt://192.168.15.4:1883"
+//#define EXAMPLE_BROKER_URI "mqtt://192.168.15.176:1883"
 //#define EXAMPLE_BROKER_URI "mqtts://192.168.15.4:8883"
 
 static char* publish = "arcelor/status";
@@ -90,6 +90,7 @@ static esp_err_t mqtt_event_handler(esp_mqtt_event_handle_t event){
                 if(event->data != NULL){
                     payload = (char *)malloc(strlen(event->data) + 1);
                     strcpy(payload, event->data);
+                    ESP_LOGI("TESTE", "tamanho=%d", event->topic_len);
                     new_message = true;
                 }
             break;

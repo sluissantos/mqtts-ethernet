@@ -87,6 +87,7 @@ void store_ethernet_ip(char *ip){
     if (err != ESP_OK) {
         ESP_LOGE(TAG, "Error opening eth_namespace: %s", esp_err_to_name(err));
         return;
+
     }
 
     if(ip != NULL){

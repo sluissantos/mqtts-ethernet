@@ -1,7 +1,7 @@
 ### 🔍 Overview
 Esse examplo demonstra um uso basico de `Ethernet driver` junto com `tcpip_adapter`. Os funcionamento global segue:
 1. Instalação do driver Ethernet.
-2. Envio de requerimento DHCP e aguardo da concessão
+2. Envio de requerimento DHCP e aguardo da concessão.
 3. Aguardo da obtenção de endereço IP.
 4. Inicializa cliente MQTT/MQTTS.
 5. Após o cliente MQTT/MQTTS ser inicializado, é possível se inscrever e publicar em tópicos.
@@ -47,7 +47,7 @@ RX UART - VERDE
 <img src="resouce/exemplo.png" alt="Portótipo montado.">
 
 
-Esses valores devem ser setados através do menuconfig da aplicação. Para isso, entre com 'idf.py menuconfig' no terminal do ESP-IDF. Na aba interativa que aparecer, vá em Example Configuration. Marque a opção 'SPI ETHERNET' e nas opções abaixo, informe que o Módulo a ser usado será o W5500. No exemplo, foi usado 'SPI clock speed (MHz)=12' e 'PHY Reset GPIO=-1'. Após isso, as configurações iniciais para uso do módulo terminaram.
+Esses valores devem ser setados através do menuconfig da aplicação. Para isso, entre com 'idf.py menuconfig' no terminal do ESP-IDF. Na aba interativa que aparecer, vá em Example Configuration. Marque a opção 'SPI ETHERNET' e, nas opções abaixo, informe que o Módulo a ser usado será o W5500. No exemplo, foi usado 'SPI clock speed (MHz)=12' e 'PHY Reset GPIO=-1'. Após isso, as configurações iniciais para uso do módulo terminaram.
 A TAG do LOGI utilizada é "eth_example". Um manipulador de eventos está setado para verificar a conexão: caso a conexão seja perdida, ela será reestabelecida automaticamente quando possível.
 OBSERVAÇÃO IMPORTANTE:
 Alguns handles que estão sendo chamados dentro de eth_main.c devem ser invocados somente 1 vez em cada execução da aplicação. É necessário um estudo de quais handles já estão sendo chamados dentro do código em questão para que não haja dupla chamada. Caso isso acontença, o ESP pode apresentar alguns erros na sua execução, como por exemplo, ficar reiniciando.
@@ -76,7 +76,7 @@ Esse componentes garantem a possibilidade de conexão bluetooth com o esp32, atr
 Já estão definidas algumas mensagens padrão para essa aplicação a partir do estado do esp32 e das mensagens recebidas:
 
 **AUTO IP**
-Essa mensagem aparece quando a variável não volatil `ip` armazenada na nvs_flash é vazia. Uma vez que essa variável está vazia, o algoritmo entende que é para ser estabelecida uma conexão ethernet com ip automático.
+Essa mensagem aparece quando a variável não volátil `ip` armazenada na nvs_flash é vazia. Uma vez que essa variável não está vazia, o algoritmo entende que é para ser estabelecida uma conexão ethernet com ip automático.
 
 **IP OK**
 Aparece somente para quando é ip automático. Uma vez que a conexão é estabelecida com sucesso e o ip automático é obtido, essa mensagem irá aparecer momentaneamente no display.
@@ -85,7 +85,7 @@ Aparece somente para quando é ip automático. Uma vez que a conexão é estabel
 Já essa mensagem irá aparecer quando for setado um ip específico (variável `ip` não vazia). Para esse caso, não é possível obter um status da conexão de rede a partir dos dados enviados. Para validar a conexão, basta verificar o tópico de status no broker ou fazer o envio de alguma mensagem válida.
 
 **🔒**
-Essa mensagem irá aparecer sempre que não for setada nenhuma mensagem de texto no display ou depois de que uma nova conexao seja estabelecida.
+Essa mensagem irá aparecer sempre que não for setada nenhuma mensagem de texto no display ou depois de que uma nova conexão for estabelecida.
 
 ### Definindo ip a partir de uma mensagem MQTT
 Após uma conexão de rede ser estabelecida, automaticamente será subscrevido o tópico `arcelor/rede`. O padrão de mensagem a ser enviado é:
@@ -95,7 +95,7 @@ Após uma conexão de rede ser estabelecida, automaticamente será subscrevido o
   "ip":"192.168.15.100",
   "gateway":"192.168.15.1",
   "netmask":"255.255.255.0",
-  "dns":"8.8.8.8",
+  "dns":"8.8.8.8"
 }
 ```
 Através dos valores definidos para esses objetos, será definido os valores da rede (estática) e que serão gravados na memória flash, sendo esse o default após qualquer reinicialização.
@@ -108,7 +108,7 @@ Exemplo:
 ```
 
 **Objeto "erase"**
-Para limpar os valores da memória e definir um ip automático, mandar um json com o objeto ```"erase":1```. Caso esse objeto seja diferente de 0, o restantes da mensagem é ignorada. Exemplo:
+Para limpar os valores da memória e definir um ip automático, mandar um json com o objeto ```"erase":1```. Caso esse objeto seja diferente de 0, o restantes da mensagem é ignorada. Esse caso so é possível casa haja conexão internet. Exemplo:
 ```
 {
   "erase":0
@@ -135,7 +135,7 @@ dns = 00C0A80F64C0A80F01FFFFFF00**08080808** = 8.8.8.8.
 ` 
 
 **opcode 02**:
-Defini somente o ip da rede.
+Define somente o ip da rede.
 Exemplo: ```02C0A80F64``` = 192.168.15.100.
 
 **opcade 03**:
@@ -143,7 +143,7 @@ Define o gateway.
 Exemplo: ```03C0A80F64``` = 192.168.15.1.
 
 **opcode 04**
-Define a mascara de rede.
+Define a máscara de rede.
 Exemplo: ```04FFFFFF00``` = 255.255.255.0.
 
 **opcade 05**
@@ -160,7 +160,7 @@ Exemplo: ```0700``` = ao enviar esse comando em HEXA, é definido que o ip do di
 
 
 ### Definir o ID do display através de uma mensagem MQTT
-Quando a aplicação é inicializada, ela automaticamente se subscreve no tópico `"arcelor/'MAC-WIFI"`.
+Quando a aplicação é inicializada, ela automaticamente se subscreve no tópico `"arcelor/{MAC-WIFI}`.
 Para definir qual o id do display, basta enviar uma mensagem mqtt para esse tópico informando qual será o id do display conectado ao esp32 que possui tal MAC.
 Exemplo: **tópico: arcelor/A0:B7:65:61:78:C0**
 
@@ -192,15 +192,15 @@ Todos os paineis irão se subscrever no mesmo tópico de mensagem (`arcelor/mess
 Com "id":0, é mandada um mensagem para o display à esquerda. Com "id":1, é mandada uma mensagem para o display central. Com "id":2, quem irá receber a mensagem será o display à direita. Somente o display central irá utilizar os objetos "plate" e "data".
 
 **Objeto "left" e "right"**
-Defini qual o sentido em que o veículo deve seguir. É importante que ambos sejam logicamente opostos: caso queira que o sinal seja para que o veículo vá para a esquerda, deve-se definir "left":1 e "right":0, assim, setas com sentido para a esquerda se deslocarão para a esquerda no painel. Para orientar que o veículo siga para a direita, deve definir "left":0 e "right":1, assim, setas com sentido para a direita se deslocarão para a direita no painel. Os símbolos e dinâmicas da mensagem padrão já são definidos. Para conhecê-las, vide prática.
+Define qual o sentido em que o veículo deve seguir. É importante que ambos sejam logicamente opostos: caso queira que o sinal seja para que o veículo vá para a esquerda, deve-se definir "left":1 e "right":0, assim, setas com sentido para a esquerda se deslocarão para a esquerda no painel. Para orientar que o veículo siga para a direita, deve definir "left":0 e "right":1, assim, setas com sentido para a direita se deslocarão para a direita no painel. Os símbolos e dinâmicas da mensagem padrão já são definidos. Para conhecê-las, vide prática.
 
 **Objeto "plate"**
 Esse objeto define qual será a placa a ser exibida no painel. É importante que o objeto contenha uma string de 7 posições preenchidas.
 Caso esse objeto contenha uma string vazia ("plate":""), irá definir que um cadeado 🔒 seja plotado no display, ignorando os objetos "left" e "right".
 
 **Objeto "data"**
-Define diretamente a mensagem que será enviada para o display. É necessário que seja uma mensagem válida conforme especificação do próprio painel. Para isso, procure o manual de utilização do mesmo. 
-Esse objeto deve ser preenchido com valores decimais conforme sua necessidade. É importante ressaltar que, uma vez que esse objeto esteja diferente de vazio, será ignorado os restantes dos objetos presentes na mensagem. Exemplo:
+Define diretamente a mensagem que será enviada para o display. É necessário que seja uma mensagem válida conforme especificação do próprio painel. Para isso, procure o manual de utilização do mesmo, que se encontra no nesse diretório em `resource`.
+Esse objeto deve ser preenchido com valores decimais conforme sua necessidade. É importante ressaltar que, uma vez que esse objeto esteja diferente de vazio, será ignorado os restantes dos objetos presentes na mensagem, caso seja uma mensagem válida. Exemplo:
 ```
 {
   "id":1,
@@ -210,6 +210,6 @@ Esse objeto deve ser preenchido com valores decimais conforme sua necessidade. �
   "data":[0, 150, 3, 255, 197, 197, 31, 0, 17]
 }
 ```
-Nesse exemplo, é definido que seja plotado no display o desenho de um cadeado 🔒 no display 1 (display central).
+Nesse exemplo, é definido que seja plotado no display o desenho de um cadeado ☎️ no display 1 (display central).
 
 É imporante ressaltar que os envios da mensagem para o painel contém um delay, devido a limitações do próprio display. Logo, quanto maior a mensagem, maior será o tempo necessário de envio e de efetiva plotagem no display.
