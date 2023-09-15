@@ -117,7 +117,7 @@ Para limpar os valores da memória e definir um ip automático, mandar um json c
 
 ## IMPORTANTE
 **TANTO AS CONFIGURAÇÕES DA REDE QUANTO A DEFINIÇÃO DO ID DO PAINEL QUE POR VENTURA TENHA SIDO MUDADA IRÃO SER APAGADAS.**
-**ATÉ O MOMENTO, É SUGERÍVEL ESTABELECER QUAL TIPO DE CONEXÇÃO (AUTOMÁTICA OU ESTÁTICA) PRIMEIRAMENTE E DEPOIS, REDEFINIR O ID DO PAINEL, CASO NECESSÁRIO**
+**ATÉ O MOMENTO, É SUGERÍVEL ESTABELECER QUAL TIPO DE CONEXÃO (AUTOMÁTICA OU ESTÁTICA) PRIMEIRAMENTE E DEPOIS, REDEFINIR O ID DO PAINEL, CASO NECESSÁRIO**
 
 ### Definir ip a partir de uma mensagem bluetooth
 Após estabelecer uma conexão bluetooth com o dispositivo, haverá a possibilidade de setar os parâmetros da rede por mensagem pré-definidas.
