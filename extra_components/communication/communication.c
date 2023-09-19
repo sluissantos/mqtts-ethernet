@@ -145,7 +145,6 @@ void parse_json(const char* jsonString) {
         define_id = 3;
     }
 
-
     if(ip != NULL || gateway != NULL || netmask != NULL || dns != NULL || flag_erase == 1){
         status_rede = true;
     }
@@ -296,8 +295,7 @@ void commUpdateBufferTask(void *pvParameter) {
 
             status = false;
         }
-
-        taskYIELD();
+        vTaskDelay(100);
     }
 }
 
@@ -355,24 +353,31 @@ void retrieve_communication_id(void) {
 
 void commUpdateRedeTask(void *pvParameter) {
     while (1) {
+        if(flag_erase){
+            flag_erase = 0;
+            nvs_flash_erase();
+            esp_restart();
+        }
         if(status_id){
+            status_id = false;  
             ESP_LOGI("COMM","entrou aqui. define_d=%d", define_id);
             store_communication_id(define_id);
             initialize_comunication();
-            status_id = false;
+            return;
         }
-        else if(status_rede){
-            if(flag_erase){
-                flag_erase = 0;
-                nvs_flash_erase();
-                esp_restart();
-            }
-            else{
-                change_rede(ip, gateway, netmask, dns);
-                status_rede = false;
-            }
+        if(status_rede){
+            status_rede = false;
+            change_rede(ip, gateway, netmask, dns);
+            return;
         }
         taskYIELD();
+    }
+}
+
+void commPublishStatusTask(void *pvParameter){
+    while (1){
+        publish_mqtts(id_display, retrieve_ethernet_one_variable(IP), retrieve_ethernet_one_variable(GATEWAY), retrieve_ethernet_one_variable(NETMASK), retrieve_ethernet_one_variable(DNS));
+        vTaskDelay(10000 / portTICK_PERIOD_MS);
     }
 }
 
@@ -407,5 +412,4 @@ void initialize_comunication(){
     id_nvs = id_default;
     retrieve_communication_id();
     id_display = id_nvs;
-    set_id(id_display);
 }

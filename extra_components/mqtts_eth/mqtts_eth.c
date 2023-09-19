@@ -1,13 +1,9 @@
 #include "mqtts_eth.h"
 
-#define QOS 2
+#define QOS 1
 #define EXAMPLE_BROKER_URI "mqtt://gwqa.revolog.com.br:1884"
 //#define EXAMPLE_BROKER_URI "mqtt://192.168.15.176:1883"
 //#define EXAMPLE_BROKER_URI "mqtts://192.168.15.4:8883"
-
-static char* publish = "arcelor/status";
-static char* subscribe_message = "arcelor/message";
-static char* subscribe_rede = "arcelor/rede";
 
 static const char *TAG ="MQTTS";
 
@@ -19,34 +15,32 @@ static bool flag_connected = false;
 static bool flag_subscribed = false;
 static bool new_message = false;
 static char* payload;
-static char* publish_topic;
-static char* subscribe_topic_message;
-static char* subscribe_topic_rede;
+static char* publish_status = "arcelor/status";
+static char* subscribe_topic_message = "arcelor/message";
+static char* subscribe_topic_rede = "arcelor/rede";
 static char* subscribe_topic_mac;
-uint8_t id;
 char status_message[40];
 
-void set_id(uint8_t ident){
-    id = ident;
-}
-
-void publish_mqtts(){
+void publish_mqtts(uint8_t id, char *ip, char *gateway, char *netmask, char *dns){
     if(flag_connected){
-        sprintf(status_message,"\"display_id\":%d\n\"status\":\"ok\"", id);
-        esp_mqtt_client_publish(client, publish_topic, status_message, 0, QOS, 1);
+        char *json_str = NULL;
+        cJSON *status_json = cJSON_CreateObject();
+        cJSON_AddNumberToObject(status_json, "tmst", esp_timer_get_time()/1000);
+        cJSON_AddNumberToObject(status_json, "id", id);
+        cJSON_AddStringToObject(status_json, "ip", ip);
+        cJSON_AddStringToObject(status_json, "gateway", gateway);
+        cJSON_AddStringToObject(status_json, "netmask", netmask);
+        cJSON_AddStringToObject(status_json, "dns", dns);    
+        json_str = cJSON_Print((const cJSON *)status_json);
+
+        esp_mqtt_client_publish(client, publish_status, (char *)json_str, strlen(json_str), QOS, 1);
+        free(json_str);
+        cJSON_Delete(status_json);
     }
     return;
 }
 
-void publish_messages_task(){
-    while (1){
-        publish_mqtts(publish_topic);
-        //ESP_LOGI(TAG, "MQTT PUBLISH");
-        vTaskDelay(10000 / portTICK_PERIOD_MS);
-    }
-}
-
-void check_messages_task(){
+void check_messages_task(void *pvParameter){
     while (1){
         if (new_message){
             set_variables(payload);
@@ -57,6 +51,18 @@ void check_messages_task(){
     }
 }
 
+void commDisconnectedTask(void *pvParameter){
+    uint16_t cont = 0;
+    while (1){
+        if(flag_connected == false){
+            cont++;
+            if(cont == 6){
+                esp_restart();
+            }
+        }
+        vTaskDelay(10000 / portTICK_PERIOD_MS);
+    }
+}
 
 
 static esp_err_t mqtt_event_handler(esp_mqtt_event_handle_t event){
@@ -98,7 +104,6 @@ static esp_err_t mqtt_event_handler(esp_mqtt_event_handle_t event){
                 if(event->data != NULL){
                     payload = (char *)malloc(strlen(event->data) + 1);
                     strcpy(payload, event->data);
-                    ESP_LOGI("TESTE", "tamanho=%d", event->topic_len);
                     new_message = true;
                 }
             break;
@@ -148,9 +153,6 @@ void initialize_mqtts(){
     esp_log_level_set("esp-tls", ESP_LOG_VERBOSE);
     esp_log_level_set("TRANSPORT", ESP_LOG_VERBOSE);
     esp_log_level_set("OUTBOX", ESP_LOG_VERBOSE);
-    publish_topic = strdup(publish);
-    subscribe_topic_message = strdup(subscribe_message);
-    subscribe_topic_rede = strdup(subscribe_rede);
 
     mqtt_app_start();
     return;

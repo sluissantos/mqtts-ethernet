@@ -11,13 +11,25 @@
 #include "esp_log.h"
 
 TaskHandle_t check_messages_task_handler;
-TaskHandle_t publish_messages_task_handler;
+TaskHandle_t commPublishStatusTask_handler;
 TaskHandle_t commUpdateBufferTask_handler;
 TaskHandle_t commUpdateRedeTask_handler;
+TaskHandle_t commDisconnectedTask_handler;
 TaskHandle_t deviceConnTask_handler;
+TaskHandle_t mainResetTask_handler;
+
+void mainResetTask(void *pvParameter) {
+    uint16_t cont = 0;
+    while (1) {
+        if(cont > 300){
+            esp_restart();
+        }
+        cont++;
+        vTaskDelay(60000 / portTICK_PERIOD_MS);
+    }
+}
 
 void init_main(void){
-
     esp_err_t ret = nvs_flash_init();
     if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
         ESP_LOGI("NVS", "ERRO AO ABRIR O NVS");
@@ -73,20 +85,26 @@ void init_main(void){
 
 void app_main(void){
     init_main();
+
+    xTaskCreatePinnedToCore(commDisconnectedTask,"CHECK_DISCONNECTED",(1024 * 5),NULL,0,&commDisconnectedTask_handler,0);
+    configASSERT(commDisconnectedTask_handler);
+
+    xTaskCreatePinnedToCore(commUpdateRedeTask,"CHECK_REDE",(1024 * 20),NULL,0,&commUpdateRedeTask_handler,0);
+    configASSERT(commUpdateRedeTask_handler);
     
-    xTaskCreatePinnedToCore(check_messages_task,"CHECK_MESSAGES",(1024 * 10),NULL,0,&check_messages_task_handler,0);
+    xTaskCreatePinnedToCore(check_messages_task,"CHECK_MESSAGES",(1024 * 5),NULL,0,&check_messages_task_handler,0);
     configASSERT(check_messages_task_handler);
 
-    xTaskCreatePinnedToCore(publish_messages_task,"PUBLISH_MESSAGES",(1024 * 10),NULL,0,&publish_messages_task_handler,0);
-    configASSERT(publish_messages_task_handler);
+    xTaskCreatePinnedToCore(commPublishStatusTask,"PUBLISH_STATUS",(1024 * 5),NULL,0,&commPublishStatusTask_handler,0);
+    configASSERT(commPublishStatusTask_handler);
 
-    xTaskCreatePinnedToCore(commUpdateBufferTask,"BUFFER",(1024 * 10),NULL,0,&commUpdateBufferTask_handler,0);
+    xTaskCreatePinnedToCore(commUpdateBufferTask,"BUFFER",(1024 * 5),NULL,0,&commUpdateBufferTask_handler,0);
     configASSERT(commUpdateBufferTask_handler);
 
-    xTaskCreatePinnedToCore(commUpdateRedeTask,"CHECK_REDE",(1024 * 10),NULL,0,&commUpdateRedeTask_handler,0);
-    configASSERT(commUpdateRedeTask_handler);
-
     // Cria task para realizar a checagem de conexão dos dispositivos BLE (Perfiérico + UART) //500ms  300 
-    xTaskCreatePinnedToCore(deviceConnectionTask,"DEVICE",(1024 *10),NULL,1,&deviceConnTask_handler,0);
+    xTaskCreatePinnedToCore(deviceConnectionTask,"DEVICE",(1024 * 5),NULL,1,&deviceConnTask_handler,0);
     configASSERT(deviceConnTask_handler);
+
+    xTaskCreatePinnedToCore(mainResetTask,"RESET",(1024 * 5),NULL,1,&mainResetTask_handler,0);
+    configASSERT(mainResetTask_handler);
 }

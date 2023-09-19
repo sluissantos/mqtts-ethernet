@@ -269,38 +269,40 @@ static void gatts_uart_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t g
                     char* ip_string = (char*)malloc(16);
                     snprintf(ip_string, 16, "%d.%d.%d.%d", param->write.value[1], param->write.value[2], param->write.value[3], param->write.value[4]);
                     ESP_LOGI(GATTS_TAG, "ip_string = %s", ip_string);
-                    change_ip(ip_string);
+                    change_one_rede_variable(IP, ip_string);
                 }
                 
                 else if ((int)param->write.value[0] == 3){
                     char* gateway_string = (char*)malloc(16);
                     snprintf(gateway_string, 16, "%d.%d.%d.%d", param->write.value[1], param->write.value[2], param->write.value[3], param->write.value[4]);
                     ESP_LOGI(GATTS_TAG, "gateway_string = %s", gateway_string);
-                    change_gateway(gateway_string);
+                    change_one_rede_variable(GATEWAY, gateway_string);
                 }
 
                 else if ((int)param->write.value[0] == 4){
                     char* netmask_string = (char*)malloc(16);
                     snprintf(netmask_string, 16, "%d.%d.%d.%d", param->write.value[1], param->write.value[2], param->write.value[3], param->write.value[4]);
                     ESP_LOGI(GATTS_TAG, "netmask = %s", netmask_string);
-                    change_netmask(netmask_string);
+                    change_one_rede_variable(NETMASK, netmask_string);
                 }
 
                 else if ((int)param->write.value[0] == 5){
                     char* dns_string = (char*)malloc(16);
                     snprintf(dns_string, 16, "%d.%d.%d.%d", param->write.value[1], param->write.value[2], param->write.value[3], param->write.value[4]);
                     ESP_LOGI(GATTS_TAG, "dns_string = %s", dns_string);
-                    change_dns(dns_string);
+                    change_one_rede_variable(DNS, dns_string);
                 }
 
                 else if ((int)param->write.value[0] == 6){
-                    ESP_LOGI("BLUE", "ENTROU AQUI");
                     nvs_flash_erase();
                     esp_restart();
                 }
                 else if ((int)param->write.value[0] == 7){
                     store_communication_id((int)param->write.value[1]);
                     initialize_comunication();
+                }
+                else if ((int)param->write.value[0] == 8){
+                    esp_restart();
                 }
     
                 else{

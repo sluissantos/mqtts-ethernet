@@ -19,9 +19,11 @@
 #include "mqtt_client.h"
 #include "communication.h"
 #include "esp_wifi.h"
+#include "esp_timer.h"
 
 void initialize_mqtts(void);
-void check_messages_task();
-void publish_messages_task();
+void check_messages_task(void *pvParameter);
+void publish_messages_task(void *pvParameter);
 void set_mac_variable(char *mac);
-void set_id(uint8_t ident);
+void commDisconnectedTask(void *pvParameter);
+void publish_mqtts(uint8_t id, char *ip, char *netmask, char *gateway, char *dns);

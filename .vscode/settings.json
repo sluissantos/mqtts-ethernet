@@ -11,6 +11,12 @@
         "socket.h": "c",
         "uart.h": "c",
         "mqtts_eth.h": "c",
-        "stdio.h": "c"
+        "stdio.h": "c",
+        "ratio": "c",
+        "system_error": "c",
+        "array": "c",
+        "functional": "c",
+        "tuple": "c",
+        "utility": "c"
     }
 }

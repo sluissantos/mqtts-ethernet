@@ -79,5 +79,6 @@ void initialize_comunication();
 void set_message_ip(bool flag);
 void status_ip(bool flag_ip);
 void store_communication_id(uint8_t id);
+void commPublishStatusTask(void *pvParameter);
 
 #endif

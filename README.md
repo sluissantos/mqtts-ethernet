@@ -158,6 +158,35 @@ Exemplo: ```06``` = clean flash memory. Após esse comando, será tentada uma co
 Realiza a definição do id do display. Esse id será armazenado na memória interna do esp32 e será definido como padrão após qualquer reinicialização. Para limpar, realizar um erase.
 Exemplo: ```0700``` = ao enviar esse comando em HEXA, é definido que o ip do display será 0 (definido através do segundo hexadecimal enviado).
 
+**opcode 08**
+Realiza um reboot no ESP32.
+
+### Critérios de Restart da aplicação
+Há duas ocasiões em que o microcontrolador irá realizar um reboot. A primeira é quando der 5 horas desde que o ESP32 foi ligado. Essa reinicialização tem intúito de corrigir possíveis erros e bugs que podem acontecer a partir do início da aplicação. A segunda é quando o microcontrolador não consegue fazer uma conexão com o broker definido em 1 minuto. Uma vez estourado esse tempo, o ESP32 irá ser reiniciado para novamente tentar realizar a conexão.
+
+### Mensagem de Status do painel
+Como supra citado, o painel quando tem acesso à rede, enviará uma mensagem no tópico pré-definido no firmware. Para o caso padrão, o tópico é `arcelor/status`.
+Quando é setada uma conexão com ip dinâmico, ou seja, o protocolo DHCP do servidor é quem fornece os parâmetros de conexão da rede, é exibida a seguinte mensagem, caso a conexão seja efetuada com sucesso:
+
+```
+{
+	"tmst":	9114,
+	"id":	1
+}
+```
+onde o primeiro parâmetro é uma variável tempo que inicia a partir do start do microcontrolador e o segundo parâmetro é o identificador do painel.
+Caso seja setado um ip estático, será exibida a seguinte mensagem:
+```
+{
+	"tmst":	334124,
+	"id":	1,
+	"ip":	"192.168.15.100",
+	"gateway":	"192.168.15.1",
+	"netmask":	"255.255.255.0",
+	"dns":	"8.8.8.8"
+}
+```
+Nessa mensagem, aém dos dois primeiros dados já mencionados, temos informações dos parâmtros setados para a rede estática.
 
 ### Definir o ID do display através de uma mensagem MQTT
 Quando a aplicação é inicializada, ela automaticamente se subscreve no tópico `"arcelor/{MAC-WIFI}`.
