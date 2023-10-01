@@ -12,6 +12,7 @@
 #include <string.h>
 #include "esp_err.h"
 #include "esp_event.h"
+#include "gpio_eth.h"
 
 #ifdef __cplusplus
 extern "C" {

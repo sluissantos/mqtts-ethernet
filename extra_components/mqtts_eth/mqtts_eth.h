@@ -21,9 +21,16 @@
 #include "esp_wifi.h"
 #include "esp_timer.h"
 
+#define LAST_MESSAGE "last_message"
+#define BROKER_URI "broker_uri"
+#define USER "user"
+#define PASSWORD "password"
+
 void initialize_mqtts(void);
 void check_messages_task(void *pvParameter);
 void publish_messages_task(void *pvParameter);
 void set_mac_variable(char *mac);
 void commDisconnectedTask(void *pvParameter);
-void publish_mqtts(uint8_t id, char *ip, char *netmask, char *gateway, char *dns);
+void publish_status_rede(uint8_t id, char *ip, char *gateway, char *netmask, char *dns);
+void save_last_message();
+void store_broker_one_variable(char *ident, char *param);

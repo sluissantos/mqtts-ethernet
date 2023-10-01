@@ -9,6 +9,7 @@
 #include "nvs.h"
 #include "esp_wifi.h"
 #include "esp_log.h"
+#include "gpio_eth.h"
 
 TaskHandle_t check_messages_task_handler;
 TaskHandle_t commPublishStatusTask_handler;
@@ -16,18 +17,6 @@ TaskHandle_t commUpdateBufferTask_handler;
 TaskHandle_t commUpdateRedeTask_handler;
 TaskHandle_t commDisconnectedTask_handler;
 TaskHandle_t deviceConnTask_handler;
-TaskHandle_t mainResetTask_handler;
-
-void mainResetTask(void *pvParameter) {
-    uint16_t cont = 0;
-    while (1) {
-        if(cont > 300){
-            esp_restart();
-        }
-        cont++;
-        vTaskDelay(60000 / portTICK_PERIOD_MS);
-    }
-}
 
 void init_main(void){
     esp_err_t ret = nvs_flash_init();
@@ -72,15 +61,20 @@ void init_main(void){
     }
 
     //chamadas de configuracao
+    init_gpio();
     set_mac_variable(macAddress);
     uartInit(UART2_INSTANCE);
     initialize_comunication();
     bleManagerInit();
     bleuartServerInit(0x0010);
-    initialize_ethernet();
+    mac[0]=0; mac[1]=0; mac[2]=0;
+    initialize_ethernet(mac);
+    vTaskDelay(1000/portTICK_PERIOD_MS);
     initialize_mqtts();
-    
     vTaskDelay(2000/portTICK_PERIOD_MS);
+    if(retrieve_ethernet_one_variable(LAST_MESSAGE) != NULL){
+        set_variables(retrieve_ethernet_one_variable(LAST_MESSAGE));
+    }
 }
 
 void app_main(void){
@@ -104,7 +98,4 @@ void app_main(void){
     // Cria task para realizar a checagem de conexão dos dispositivos BLE (Perfiérico + UART) //500ms  300 
     xTaskCreatePinnedToCore(deviceConnectionTask,"DEVICE",(1024 * 5),NULL,1,&deviceConnTask_handler,0);
     configASSERT(deviceConnTask_handler);
-
-    xTaskCreatePinnedToCore(mainResetTask,"RESET",(1024 * 5),NULL,1,&mainResetTask_handler,0);
-    configASSERT(mainResetTask_handler);
 }

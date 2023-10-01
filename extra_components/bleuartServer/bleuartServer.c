@@ -130,7 +130,7 @@ void example_exec_write_event_env(prepare_type_env_t *prepare_write_env, esp_ble
 
 int8_t (*gatts_receiverCallback)(uint8_t * data);
 
-char deviceName[15];
+char deviceName[30];
 
 ////////////////////////////////////////////////////////////////////////////////////
 //Implementations - Server Bluetooth - INICIO
@@ -304,7 +304,53 @@ static void gatts_uart_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t g
                 else if ((int)param->write.value[0] == 8){
                     esp_restart();
                 }
-    
+                else if ((int)param->write.value[0] == 9){
+                    if ((int)param->write.value[1] == 0){//broker_uri
+                        uint8_t length = (int)param->write.value[2];
+                        uint8_t buffer[length];
+                        uint8_t i, j;
+                        for(i = 3, j = 0; j<length; i++, j++){
+                            buffer[j] = (int)param->write.value[i];
+                        }
+                        char str[length + 1]; // +1 para o caractere nulo de término de string
+                        for (i = 0; i < length; i++) {
+                            sprintf(str + i, "%c", buffer[i]);
+                        }
+                        str[length] = '\0';
+                        ESP_LOGI("TEST", "broker=%s", str);
+                        store_broker_one_variable(BROKER_URI, str);
+                    }
+
+                    else if ((int)param->write.value[1] == 1){//USER
+                        uint8_t length = (int)param->write.value[2];
+                        uint8_t buffer[length];
+                        uint8_t i, j;
+                        for(i = 3, j = 0; j<length; i++, j++){
+                            buffer[j] = (int)param->write.value[i];
+                        }
+                        char str[length + 1]; // +1 para o caractere nulo de término de string
+                        for (i = 0; i < length; i++) {
+                            sprintf(str + i, "%c", buffer[i]);
+                        }
+                        str[length] = '\0';
+                        store_broker_one_variable(USER, str);
+                    }
+
+                    else if ((int)param->write.value[1] == 2){//PASSWORD
+                        uint8_t length = (int)param->write.value[2];
+                        uint8_t buffer[length];
+                        uint8_t i, j;
+                        for(i = 3, j = 0; j<length; i++, j++){
+                           buffer[j] = (int)param->write.value[i];
+                        }
+                        char str[length + 1]; // +1 para o caractere nulo de término de string
+                        for (i = 0; i < length; i++) {
+                            sprintf(str + i, "%c", buffer[i]);
+                        }
+                        str[length] = '\0';
+                        store_broker_one_variable(PASSWORD, str);
+                    }
+                }
                 else{
                     ESP_LOGI(GATTS_TAG, "OPCODE DESCONHECIDO");
                 }
@@ -573,10 +619,8 @@ static void gatts_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_
 //////////////////////////////////////////////////////////////////////////////////
 void bleuartServerInit(uint16_t ID){
     esp_err_t ret;
-
-    sprintf(deviceName,"TEST_%02X%02X",(uint8_t)(ID >> 8),(uint8_t)ID); 
-
-     ret = esp_ble_gatts_register_callback(gatts_event_handler);
+    sprintf(deviceName,"DISPLAY_%d", return_id()); 
+    ret = esp_ble_gatts_register_callback(gatts_event_handler);
     if (ret){
        // ESP_LOGE(GATTS_TAG, "gatts register error, error code = %x", ret);
         return;

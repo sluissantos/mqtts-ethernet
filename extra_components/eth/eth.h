@@ -24,7 +24,7 @@
 #define NETMASK "netmask"
 #define DNS "dns"
 
-void initialize_ethernet(void);
+void initialize_ethernet(const uint8_t mac[6]);
 void ip_obtained(void);
 void change_rede(char *ip, char *gateway, char *netmask, char *dns);
 void nvs_erase(void);

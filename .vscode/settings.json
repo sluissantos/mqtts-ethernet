@@ -17,6 +17,9 @@
         "array": "c",
         "functional": "c",
         "tuple": "c",
-        "utility": "c"
+        "utility": "c",
+        "gpio_eth.h": "c",
+        "stdint.h": "c",
+        "random": "c"
     }
 }

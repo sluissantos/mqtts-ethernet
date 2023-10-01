@@ -17,15 +17,16 @@ uint8_t lengthDataUart = 0;
 static const char *TAG ="COMMUNICATION";
 char *name_space = "comm_namespace";
 
-uint8_t id_default = 1;
+uint8_t id_default = 0;
 
 uint8_t id_nvs;
 
 uint8_t define_id = 3;
-uint8_t id;
+uint8_t id=3;
 uint8_t id_display;
-uint8_t left;
-uint8_t right;
+uint8_t left=2;
+uint8_t right=2;
+
 char* plate;
 
 char *ip;
@@ -45,6 +46,21 @@ void parse_json(const char* jsonString) {
     if (json == NULL) {
         printf("Erro ao fazer o parse do JSON.\n");
         return;
+    }
+
+    cJSON* restart_object = cJSON_GetObjectItem(json, "restart");
+    if (restart_object != NULL) {
+        if(restart_object->valueint == 1){
+            save_last_message();
+            esp_restart();
+        }
+    }
+
+    cJSON* reset_object = cJSON_GetObjectItem(json, "reset");
+    if (reset_object != NULL) {
+        if(reset_object->valueint == 1){
+            eth_reset();
+        }
     }
     
     cJSON* id_object = cJSON_GetObjectItem(json, "id");
@@ -195,9 +211,9 @@ void commUpdateBufferTask(void *pvParameter) {
    while (1){
         uint8_t data_stop[] = {0x00, 0x96, 0x03, 0xFF, 0XC5, 0XC5, 0x1F, 0x62, 0x11};
 
-        uint8_t data_left[] = {0x00, 0x96, 0x03, 0xFF, 0xC0, 0xC0, 0x1F, 0x12, 0x1F, 0x12, 0x1F, 0x12, 0x1F, 0x12, 0x1F, 0x12, 0x1F, 0x12, 0x1F, 0x12, 0x1F, 0x12, 0x11};
+        uint8_t data_left[] = {0x00, 0x96, 0x03, 0xFF, 0xC5, 0xC5, 0x1F, 0x12, 0x1F, 0x12, ' ', ' ', ' ', ' ', ' ', ' ', 0x11};
 
-        uint8_t data_right[] = {0x00, 0x96, 0x03, 0xFF, 0xC1, 0xC1, 0x1F, 0x0E, 0x1F, 0x0E, 0x1F, 0x0E, 0x1F, 0x0E, 0x1F, 0x0E, 0x1F, 0x0E, 0x1F, 0x0E, 0x1F, 0x0E, 0x11};
+        uint8_t data_right[] = {0x00, 0x96, 0x03, 0xFF, 0xC5, 0xC5, 0x7E, ' ', ' ', ' ', ' ', ' ', 0x1F, 0x0E, 0x1F, 0x0E, 0x11};
 
         uint8_t data_id_left[] = {0x00, 0x96, 0x03, 0xFF, 0xC5, 0xC5, 0x01, ' ', ' ', ' ', ' ', ' ', ' ', ' ',
          0xFF, 0xC5, 0xC5, 0x01, ' ', ' ', ' ', ' ', ' ', ' ', ' ',
@@ -210,6 +226,7 @@ void commUpdateBufferTask(void *pvParameter) {
                 0x1F, 0x0E, 0x1F, 0x0E,0x1F, 0x0E, 0x1F, 0x0E, 0x1F, 0x0E, 0x1F, 0x0E, 0x11};
 
         if (status) {
+            ESP_LOGI("TESTE", "ENTROU AQUI");
             if(id == 0 && id_display == 0) {
                 if(data != NULL){
                     send_data(data, dataLen);
@@ -219,6 +236,9 @@ void commUpdateBufferTask(void *pvParameter) {
                         send_data(data_stop, sizeof(data_stop));
                     }
                     else {
+                        for (uint8_t i = 0; i < strlen(plate) && strlen(plate)<=6; i++) {
+                            data_left[10 + i] = plate[i];
+                        }
                         send_data(data_left, sizeof(data_left));
                     }
                 }
@@ -227,6 +247,10 @@ void commUpdateBufferTask(void *pvParameter) {
                         send_data(data_stop, sizeof(data_stop));
                     }
                     else {
+                        uint8_t i,j;
+                        for (i = 6-strlen(plate), j = 0; i < 6; i++, j++) {
+                            data_right[6+i] = plate[j];
+                        }
                         send_data(data_right, sizeof(data_right));
                     }
                 }
@@ -274,6 +298,9 @@ void commUpdateBufferTask(void *pvParameter) {
                         send_data(data_stop, sizeof(data_stop));
                     }
                     else {
+                        for (uint8_t i = 0; i < strlen(plate) && strlen(plate)<=6; i++) {
+                            data_left[10 + i] = plate[i];
+                        }
                         send_data(data_left, sizeof(data_left));
                     }
                 }
@@ -282,6 +309,10 @@ void commUpdateBufferTask(void *pvParameter) {
                         send_data(data_stop, sizeof(data_stop));
                     }
                     else {
+                        uint8_t i,j;
+                        for (i = 6-strlen(plate), j = 0; i < 6; i++, j++) {
+                            data_right[6+i] = plate[j];
+                        }
                         send_data(data_right, sizeof(data_right));
                     }
                 }
@@ -351,6 +382,10 @@ void retrieve_communication_id(void) {
     nvs_close(communication_nvs_handle);
 }
 
+uint8_t return_id(){
+    return id_display;
+}
+
 void commUpdateRedeTask(void *pvParameter) {
     while (1) {
         if(flag_erase){
@@ -360,15 +395,16 @@ void commUpdateRedeTask(void *pvParameter) {
         }
         if(status_id){
             status_id = false;  
-            ESP_LOGI("COMM","entrou aqui. define_d=%d", define_id);
             store_communication_id(define_id);
             initialize_comunication();
             return;
         }
         if(status_rede){
             status_rede = false;
-            change_rede(ip, gateway, netmask, dns);
-            return;
+            if(id==id_display){
+                change_rede(ip, gateway, netmask, dns);
+                return;
+            }
         }
         taskYIELD();
     }
@@ -376,15 +412,15 @@ void commUpdateRedeTask(void *pvParameter) {
 
 void commPublishStatusTask(void *pvParameter){
     while (1){
-        publish_mqtts(id_display, retrieve_ethernet_one_variable(IP), retrieve_ethernet_one_variable(GATEWAY), retrieve_ethernet_one_variable(NETMASK), retrieve_ethernet_one_variable(DNS));
+        publish_status_rede(id_display, retrieve_ethernet_one_variable(IP), retrieve_ethernet_one_variable(GATEWAY), retrieve_ethernet_one_variable(NETMASK), retrieve_ethernet_one_variable(DNS));
         vTaskDelay(10000 / portTICK_PERIOD_MS);
     }
 }
 
 void set_message_ip(bool flag){
-    uint8_t data_auto_ip[] = {0x00, 0x96, 0x03, 0xFF, 0xC5, 0xC5, 0x01, 'A', 'U', 'T', 'O', ' ', 'I', 'P',0x11};
-    uint8_t data_static_ip[] = {0x00, 0x96, 0x03, 0xFF, 0xC5, 0xC5, 0x01, 'S', 'T', 'A', 'T', 'I','C', ' ', 'I', 'P',0x11};
-    ESP_LOGI("FLAG", "FLAG=%d", flag);
+    uint8_t data_auto_ip[] = {0x00, 0x96, 0x03, 0xFF, 0xC5, 0xC5, 0x01, 'A', 'U', 'T', 'O', ' ', 'I', 'P', 0x11};
+    uint8_t data_static_ip[] = {0x00, 0x96, 0x03, 0xFF, 0xC5, 0xC5, 0x01, 'S', 'T', 'A', 'T', 'I','C', ' ', 'I', 'P', 0x11};
+    uint8_t data_static[] = {0x00, 0x96, 0x03, 0xFF, 0xC5, 0xC5, 0x01, 'S', 'T', 'A', 'T', 'I','C', 0x11};
     if(id_display == 1){
         if(flag){
             send_data(data_auto_ip, sizeof(data_auto_ip));
@@ -395,12 +431,27 @@ void set_message_ip(bool flag){
             vTaskDelay(pdMS_TO_TICKS(2000));
         }
     }
+    else{
+        if(flag){
+            send_data(data_auto_ip, sizeof(data_auto_ip));
+            vTaskDelay(pdMS_TO_TICKS(50));
+        }
+        else{
+            send_data(data_static, sizeof(data_static));
+            vTaskDelay(pdMS_TO_TICKS(2000));
+        }
+    }
+}
+
+void set_message_offline(){
+    uint8_t data_offline[] = {0x00, 0x96, 0x03, 0xFF, 0xC5, 0xC5, 0x01, 'O', 'F', 'F', '-', 'L','I', 'N', 'E', 0x11};
+    send_data(data_offline, sizeof(data_offline));
 }
 
 void status_ip(bool flag_ip){
     uint8_t data_stop[] = {0x00, 0x96, 0x03, 0xFF, 0XC5, 0XC5, 0x1F, 0x62, 0x11};
     uint8_t data_ip_ok[] = {0x00, 0x96, 0x04, 0xFF, 0xC5, 0xC5, 0x01, 'I', 'P', ' ', 'O', 'K',0x11};
-    if(id_display == 1 && flag_ip){
+    if(flag_ip){
         send_data(data_ip_ok, sizeof(data_ip_ok));
         vTaskDelay(pdMS_TO_TICKS(50));
     }

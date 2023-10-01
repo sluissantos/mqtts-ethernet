@@ -1,14 +1,9 @@
 #include "eth.h"
 
 static char *TAG = "eth_example";
-/*
-static char *ip = "192.168.15.100";
-static char *gateway = "192.168.15.1";
-static char *netmask = "255.255.255.0";
-static char *dns = "8.8.8.8";
-*/
-
 char *namespace = "eth_namespace";
+
+uint16_t cont_auto_ip = 0;
 
 char *ip = "";
 char *gateway = "";
@@ -91,7 +86,7 @@ void store_ethernet_one_variable(char *ident, char *param){
     if(param != NULL){
         err = nvs_set_str(ethernet_nvs_handle, ident, param);
         if (err != ESP_OK) {
-            ESP_LOGI(TAG, "Error to stage gateway, %s", esp_err_to_name(err));
+            ESP_LOGI(TAG, "Error to store %s, %s", ident, esp_err_to_name(err));
         }
         else{
             ESP_LOGE("store", "%s: %s", ident, param);
@@ -243,11 +238,11 @@ char* retrieve_ethernet_one_variable(char *variable) {
 
     esp_err_t err = nvs_open(namespace, NVS_READONLY, &ethernet_nvs_handle);
     if (err != ESP_OK) {
-        ESP_LOGI(TAG, "Error to open eth_namespace to retrieve");
+        //ESP_LOGI(TAG, "Error to open eth_namespace to retrieve");
         return NULL;
     }
 
-    char buffer[64]; // Buffer para armazenar as strings recuperadas
+    char buffer[256]; // Buffer para armazenar as strings recuperadas
     char *var = NULL;
 
     // Recuperar as variáveis
@@ -267,13 +262,16 @@ char* retrieve_ethernet_one_variable(char *variable) {
     }
     // Fechar o namespace NVS
     nvs_close(ethernet_nvs_handle);
-
     return var;
 }
 
 void ip_obtained(void){
     while (!ip_address_obtained) {
-        vTaskDelay(100 / portTICK_PERIOD_MS);
+        cont_auto_ip++;
+        if(cont_auto_ip == 2000){
+            esp_restart();
+        }
+        vTaskDelay(50);
     }
 }
 
@@ -319,7 +317,7 @@ void change_one_rede_variable(char* ident, char *param){
     esp_restart();
 }
 
-void initialize_ethernet(void){
+void initialize_ethernet(const uint8_t maceth[6]) {
     // Configure SPI interface and Ethernet driver for specific SPI module
     /* start Ethernet driver state machine */
     ESP_ERROR_CHECK(gpio_install_isr_service(0));
@@ -410,9 +408,7 @@ void initialize_ethernet(void){
     /* The SPI Ethernet module might not have a burned factory MAC address, we cat to set it manually.
     02:00:00 is a Locally Administered OUI range so should not be used except when testing on a LAN under your control.
     */
-    ESP_ERROR_CHECK(esp_eth_ioctl(eth_handle_spi, ETH_CMD_S_MAC_ADDR, (uint8_t[]) {
-        0x02, 0x00, 0x00, 0x12, 0x34, 0x56
-    }));
+    ESP_ERROR_CHECK(esp_eth_ioctl(eth_handle_spi, ETH_CMD_S_MAC_ADDR, maceth));
     // Define manualmente o endereço MAC para a interface Ethernet
 
     // attach Ethernet driver to TCP/IP stack
