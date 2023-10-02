@@ -272,8 +272,9 @@ Com "id":0, é mandada um mensagem para o display à esquerda. Com "id":1, é ma
 Define qual o sentido em que o veículo deve seguir. É importante que ambos sejam logicamente opostos: caso queira que o sinal seja para que o veículo vá para a esquerda, deve-se definir "left":1 e "right":0, assim, setas com sentido para a esquerda se deslocarão para a esquerda no painel. Para orientar que o veículo siga para a direita, deve definir "left":0 e "right":1, assim, setas com sentido para a direita se deslocarão para a direita no painel. Os símbolos e dinâmicas da mensagem padrão já são definidos. Para conhecê-las, vide prática.
 
 **Objeto "plate"**
-Esse objeto define qual será a placa a ser exibida no painel. É importante que o objeto contenha uma string de 7 posições preenchidas.
+Esse objeto define qual será a placa a ser exibida no painel. É importante que o objeto contenha uma string de 7 posições preenchidas caso a mensagem seja enviada para o display com id igual a 1. Caso contrário, plate deve conter somente 6 caracteres, uma vez que os displays 0 e 2 são menores.
 Caso esse objeto contenha uma string vazia ("plate":""), irá definir que um cadeado 🔒 seja plotado no display, ignorando os objetos "left" e "right".
+
 
 **Objeto "data"**
 Define diretamente a mensagem que será enviada para o display. É necessário que seja uma mensagem válida conforme especificação do próprio painel. Para isso, procure o manual de utilização do mesmo, que se encontra no nesse diretório em `resource`.
