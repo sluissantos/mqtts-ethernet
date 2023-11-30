@@ -16,7 +16,7 @@ static void test_on_ping_success(esp_ping_handle_t hdl, void *args){
     esp_ping_get_profile(hdl, ESP_PING_PROF_IPADDR, &target_addr, sizeof(target_addr));
     esp_ping_get_profile(hdl, ESP_PING_PROF_SIZE, &recv_len, sizeof(recv_len));
     esp_ping_get_profile(hdl, ESP_PING_PROF_TIMEGAP, &elapsed_time, sizeof(elapsed_time));
-    ESP_LOGI(TAG, "%d bytes from %s icmp_seq=%d ttl=%d time=%d ms\n",
+    ESP_LOGI(TAG, "%ld bytes from %s icmp_seq=%d ttl=%d time=%ld ms\n",
            recv_len, inet_ntoa(target_addr.u_addr.ip4), seqno, ttl, elapsed_time);
 }
 
@@ -36,7 +36,7 @@ static void test_on_ping_end(esp_ping_handle_t hdl, void *args){
     esp_ping_get_profile(hdl, ESP_PING_PROF_REQUEST, &transmitted, sizeof(transmitted));
     esp_ping_get_profile(hdl, ESP_PING_PROF_REPLY, &received, sizeof(received));
     esp_ping_get_profile(hdl, ESP_PING_PROF_DURATION, &total_time_ms, sizeof(total_time_ms));
-    ESP_LOGI(TAG, "%d packets transmitted, %d received, time %dms\n", transmitted, received, total_time_ms);
+    ESP_LOGI(TAG, "%ld packets transmitted, %ld received, time %ldms\n", transmitted, received, total_time_ms);
 }
 
 void initialize_ping(){

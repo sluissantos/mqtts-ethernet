@@ -28,6 +28,7 @@
 #include "eth.h"
 #include "nvs.h"
 #include "nvs_flash.h"
+#include "gpio_eth.h"
 
 #define COMM_INTERFACE_UART 0
 #define COMM_INTERFACE_BLE_SERVER  1  
