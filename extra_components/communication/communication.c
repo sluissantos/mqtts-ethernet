@@ -17,7 +17,7 @@ uint8_t lengthDataUart = 0;
 static const char *TAG ="COMMUNICATION";
 char *name_space = "comm_namespace";
 
-uint8_t id_default = 0;
+uint8_t id_default = 1;
 
 uint8_t id_nvs;
 
@@ -29,10 +29,10 @@ uint8_t right=2;
 
 char* plate;
 
-char *ip;
-char *gateway;
-char *netmask;
-char *dns;
+char *ip_c;
+char *gateway_c;
+char *netmask_c; 
+char *dns_c;
 uint8_t flag_erase=0;
 
 uint8_t* data = 0;
@@ -114,36 +114,36 @@ void parse_json(const char* jsonString) {
     //mensagens de setup de rede
     cJSON* ip_object = cJSON_GetObjectItem(json, "ip");
     if (ip_object != NULL) {
-        ip = (char *)malloc(strlen(ip_object->valuestring) + 1);
-        strcpy(ip, ip_object->valuestring);
+        ip_c = (char *)malloc(strlen(ip_object->valuestring) + 1);
+        strcpy(ip_c, ip_object->valuestring);
     } else {
-        ip = NULL;
+        ip_c = NULL;
     }
 
     cJSON* gateway_object = cJSON_GetObjectItem(json, "gateway");
     if (gateway_object != NULL) {
-        gateway = (char *)malloc(strlen(gateway_object->valuestring) + 1);
-        strcpy(gateway, gateway_object->valuestring);
+        gateway_c = (char *)malloc(strlen(gateway_object->valuestring) + 1);
+        strcpy(gateway_c, gateway_object->valuestring);
     } else {
-        gateway = NULL;
+        gateway_c = NULL;
     }
 
 
     cJSON* netmask_object = cJSON_GetObjectItem(json, "netmask");
     if (netmask_object != NULL) {
-        netmask = (char *)malloc(strlen(netmask_object->valuestring) + 1);
-        strcpy(netmask, netmask_object->valuestring);
+        netmask_c = (char *)malloc(strlen(netmask_object->valuestring) + 1);
+        strcpy(netmask_c, netmask_object->valuestring);
     } else {
-        netmask = NULL;
+        netmask_c = NULL;
     }
 
 
     cJSON* dns_object = cJSON_GetObjectItem(json, "dns");
     if (dns_object != NULL) {
-        dns = (char *)malloc(strlen(dns_object->valuestring) + 1);
-        strcpy(dns, dns_object->valuestring);
+        dns_c = (char *)malloc(strlen(dns_object->valuestring) + 1);
+        strcpy(dns_c, dns_object->valuestring);
     } else {
-        dns = NULL;
+        dns_c = NULL;
     }
 
     cJSON* erase_object = cJSON_GetObjectItem(json, "erase");
@@ -161,7 +161,7 @@ void parse_json(const char* jsonString) {
         define_id = 3;
     }
 
-    if(ip != NULL || gateway != NULL || netmask != NULL || dns != NULL || flag_erase == 1){
+    if(ip_c != NULL || gateway_c != NULL || netmask_c != NULL || dns_c != NULL || flag_erase == 1){
         status_rede = true;
     }
 
@@ -402,7 +402,7 @@ void commUpdateRedeTask(void *pvParameter) {
         if(status_rede){
             status_rede = false;
             if(id==id_display){
-                change_rede(ip, gateway, netmask, dns);
+                change_rede(ip_c, gateway_c, netmask_c, dns_c);
                 return;
             }
         }

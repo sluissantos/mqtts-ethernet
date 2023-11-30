@@ -94,7 +94,7 @@ void commDisconnectedTask(void *pvParameter){
 
 
 static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_t event_id, void *event_data){
-    ESP_LOGD(TAG, "Event dispatched from event loop base=%s, event_id=%d", base, event_id);
+    ESP_LOGD(TAG, "Event dispatched from event loop base=%s, event_id=%ld", base, event_id);
     esp_mqtt_event_handle_t event = event_data;
     esp_mqtt_client_handle_t client = event->client;
     switch ((esp_mqtt_event_id_t)event_id) {
@@ -167,17 +167,15 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
             ESP_LOGI(TAG, "OTHER EVENTS ID:%d", event->event_id);
             break;
     }
-    return ESP_OK;
-    
-    }
+}
 
 static void mqtt_app_start(void){
     const esp_mqtt_client_config_t mqtt_cfg = {
-        .uri = broker_uri,
+        .broker.address.uri = broker_uri,
         //.cert_pem =  (const char *)broker_cert_pem_start,
-        .username = user,
-        .password = password,
-        .lwt_qos = QOS
+        .credentials.username = user,
+        .credentials.authentication.password = password,
+        .session.last_will.qos = QOS
     };
 
     memset(&client,0,sizeof(esp_mqtt_client_handle_t));
@@ -196,8 +194,6 @@ void set_mac_variable(char *mac){
 }
 
 char* retrieve_broker_one_variable(char *variable) {
-    ESP_LOGI("ENTROU", "ENTROU AQUI");
-
     nvs_handle_t mqtt_nvs_handle;
 
     esp_err_t err = nvs_open(namespace_mqtt, NVS_READONLY, &mqtt_nvs_handle);

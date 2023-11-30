@@ -18,6 +18,7 @@
 #include "nvs.h"
 #include "communication.h"
 #include "mqtts_eth.h"
+#include "ethernet_init.h"
 
 #define IP "ip"
 #define GATEWAY "gateway"

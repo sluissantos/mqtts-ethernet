@@ -59,6 +59,6 @@ uint8_t uartSendData(uint8_t uartInstace, char *data, uint8_t length) {
 // Retorno:    void 
 //////////////////////////////////////////////////////////////////////////////////
 uint8_t uartReadData(uint8_t uartInstace, uint8_t *data){
-    int len= uart_read_bytes(uartInstace, data, (UART_BUFFER_SIZE - 1), 20 / portTICK_RATE_MS);
+    int len= uart_read_bytes(uartInstace, data, (UART_BUFFER_SIZE - 1), 20 / portTICK_PERIOD_MS);
     return len;
 }

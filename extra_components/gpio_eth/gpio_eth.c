@@ -10,7 +10,7 @@ void eth_reset(){
 void init_gpio() {
     // Configuração do pino de reset
     gpio_config_t reset_io_config;
-    reset_io_config.intr_type = GPIO_PIN_INTR_DISABLE;
+    reset_io_config.intr_type = GPIO_INTR_DISABLE;
     reset_io_config.mode = GPIO_MODE_OUTPUT;
     reset_io_config.pin_bit_mask = (1ULL << W5500_RESET_PIN);
     reset_io_config.pull_down_en = GPIO_PULLDOWN_DISABLE;
